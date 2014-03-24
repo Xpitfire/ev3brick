@@ -35,8 +35,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="MonoBrickFirmware">
-      <HintPath>..\..\..\..\..\LEGOMindstorm\monobrick\libs\MonoBrickFirmware.dll</HintPath>
+    <Reference Include="MonoBrickFirmware, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\MonoBrickFirmware.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>
