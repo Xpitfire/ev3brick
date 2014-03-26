@@ -36,11 +36,9 @@ namespace PrgSps2Gr1
 
         protected void SetState(State newState)
         {
-            if (!this.Equals(newState))
-            {
-                Ev3.WriteLine("StateChanged: " + newState);
-                _controller.ControllerState = newState;
-            }
+            if (Equals(newState)) return;
+            Ev3.WriteLine("StateChanged: " + newState);
+            _controller.ControllerState = newState;
         }
 
         public void Update()
@@ -49,6 +47,10 @@ namespace PrgSps2Gr1
             if (Ev3.ReachedEdge() && !(_controller.ControllerState is ErrorEdgeImpl))
             {
                 SetState(new ErrorEdgeImpl());
+            }
+            else if (Ev3.ObjectDetected() && !(_controller.ControllerState is NormalObjectDetectedImpl))
+            {
+                SetState(new NormalObjectDetectedImpl());
             }
             else
             {

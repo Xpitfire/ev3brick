@@ -32,7 +32,7 @@ namespace PrgSps2Gr1
             while (_isAlive)
             {
                 ControllerState.Update();
-                Thread.Sleep(300);
+                Thread.Sleep(50);
             }
         }
 

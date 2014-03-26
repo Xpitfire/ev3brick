@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ErrorEdgeImpl.cs" />
+    <Compile Include="NormalObjectDetectedImpl.cs" />
     <Compile Include="NormalPauseImpl.cs" />
     <Compile Include="ProgramEv3Sps2Gr1.cs" />
     <Compile Include="Ev3Control.cs" />
