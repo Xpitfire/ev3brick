@@ -3,7 +3,8 @@
 namespace PrgSps2Gr1
 {
     class InitStartupImpl : State
-    {
+    {   
+
         public InitStartupImpl(ProgramEv3Sps2Gr1 project)
         {
             Controller = project;
