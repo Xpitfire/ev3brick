@@ -23,7 +23,7 @@ namespace PrgSps2Gr1
             _lcd.Clear();
         }
 
-        public void VehicleDirve(sbyte speed)
+        public void VehicleDrive(sbyte speed)
         {
             _vehicle.ReverseLeft = false;
             _vehicle.ReverseRight = false;

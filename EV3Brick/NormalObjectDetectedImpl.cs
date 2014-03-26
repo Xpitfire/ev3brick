@@ -10,7 +10,7 @@ namespace PrgSps2Gr1
     {
         protected override void PerformAction()
         {
-            throw new NotImplementedException();
+            Ev3.WriteLine("got you !!!");
         }
 
         public override string ToString()
