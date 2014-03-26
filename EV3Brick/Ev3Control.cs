@@ -1,6 +1,7 @@
 ﻿using MonoBrickFirmware.Display;
 using MonoBrickFirmware.Movement;
 using MonoBrickFirmware.Sensors;
+using System;
 
 namespace PrgSps2Gr1
 {
@@ -16,6 +17,14 @@ namespace PrgSps2Gr1
         private Point _point = new Point(0, 0);
         private readonly EV3ColorSensor _colorSensor;
         private Color _savedColor;
+
+        public enum Speed 
+        {
+            Slow = 10, 
+            Medium = 50, 
+            Fast = 70, 
+            Turbo = 100
+        }
 
         public Color SavedColor
         {
@@ -104,5 +113,7 @@ namespace PrgSps2Gr1
         {
             return _colorSensor.ReadColor();
         }
+
+
     }
 }
