@@ -6,9 +6,11 @@ namespace PrgSps2Gr1
 {
     class Ev3Control
     {
+        private const float MinObjectDistanceDelta = 100F;
         private const int OffSet = 10;
         private readonly Vehicle _vehicle;
         private readonly IRSensor _irSensor;
+        private readonly UltraSonicSensor _ultraSonicSensor;
         private readonly Lcd _lcd;
         private Point _point = new Point(0, 0);
 
@@ -16,6 +18,7 @@ namespace PrgSps2Gr1
         {
             _vehicle = new Vehicle(MotorPort.OutA, MotorPort.OutD);
             _irSensor = new IRSensor(SensorPort.In1);
+            _ultraSonicSensor = new UltraSonicSensor(SensorPort.In2, UltraSonicMode.Centimeter);
             _lcd = new Lcd();
             _lcd.Clear();
         }
@@ -63,6 +66,11 @@ namespace PrgSps2Gr1
         public bool ReachedEdge()
         {
             return _irSensor.Read() < 30;
+        }
+
+        public bool ObjectDetected()
+        {
+            return _ultraSonicSensor.ReadDistance() < MinObjectDistanceDelta;
         }
 
         public void WriteLine(string s)
