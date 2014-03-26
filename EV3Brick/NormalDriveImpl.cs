@@ -6,7 +6,7 @@ namespace PrgSps2Gr1
     {
         protected override void PerformAction()
         {
-            Ev3.VehicleDirve(25);
+            Ev3.VehicleDrive(25);
         }
 
         public override String ToString()

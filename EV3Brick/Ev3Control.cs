@@ -33,7 +33,7 @@ namespace PrgSps2Gr1
             _colorSensor = new EV3ColorSensor(SensorPort.In2, ColorMode.Color);
         }
 
-        public void VehicleDirve(sbyte speed)
+        public void VehicleDrive(sbyte speed)
         {
             _vehicle.ReverseLeft = false;
             _vehicle.ReverseRight = false;
