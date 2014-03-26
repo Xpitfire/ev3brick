@@ -1,7 +1,6 @@
 ﻿using MonoBrickFirmware.Display;
 using MonoBrickFirmware.Movement;
 using MonoBrickFirmware.Sensors;
-using System;
 
 namespace PrgSps2Gr1
 {
@@ -14,10 +13,10 @@ namespace PrgSps2Gr1
         private readonly IRSensor _irSensor;
         private readonly UltraSonicSensor _ultraSonicSensor;
         private readonly Lcd _lcd;
+        private readonly TouchSensor _touchSensor;
         private Point _point;
         private readonly EV3ColorSensor _colorSensor;
-        private Color _savedColor;
-        private Motor _motorSensorSpinner;
+        private readonly Motor _motorSensorSpinner;
         private int _spinDirection;
         private bool _spinClockwise;
         private const int MinSpin = -90;
@@ -33,22 +32,26 @@ namespace PrgSps2Gr1
             Turbo = 100
         }
 
-        public Color SavedColor
-        {
-            set { _savedColor = value; }
-            get { return _savedColor; }
-        }
+        public Color SavedColor { get; set; }
 
         public Ev3Control()
         {
+            // init motors
+            _motorSensorSpinner = new Motor(MotorPort.OutB);
             _vehicle = new Vehicle(MotorPort.OutA, MotorPort.OutD);
+
+            // init sensors
             _irSensor = new IRSensor(SensorPort.In1);
             _ultraSonicSensor = new UltraSonicSensor(SensorPort.In2, UltraSonicMode.Centimeter);
+            _colorSensor = new EV3ColorSensor(SensorPort.In2, ColorMode.Color);
+            _touchSensor = new TouchSensor(SensorPort.In3);
+
+            // init display
+            _point = new Point(0, 0);
             _lcd = new Lcd();
             _lcd.Clear();
-            _colorSensor = new EV3ColorSensor(SensorPort.In2, ColorMode.Color);
-            _motorSensorSpinner = new Motor(MotorPort.OutB);
-            _point = new Point(0, 0);
+
+            // init ev3 default settings
             _spinDirection = 0;
             _spinClockwise = true;
         }
@@ -95,33 +98,32 @@ namespace PrgSps2Gr1
 
         public bool ReachedEdge()
         {
-            return _irSensor.Read() < 30;
+            return _touchSensor.IsPressed();
         }
 
         public void SpinScanner(bool active)
-        {   
-            if (active)
+        {
+            if (!active) return;
+
+            if (_spinDirection >= MaxSpin)
             {
-                if (_spinDirection >= MaxSpin)
-                {
-                    _spinClockwise = false;
-                }
-                if (_spinDirection <= MinSpin)
-                {
-                    _spinClockwise = true;
-                }
-
-                if (_spinClockwise)
-                {
-                    _spinDirection += SpinStep;
-                }
-                else
-                {
-                    _spinDirection -= SpinStep;
-                }
-
-                _motorSensorSpinner.MoveTo(SpinningSpeed, _spinDirection, true, false);
+                _spinClockwise = false;
             }
+            if (_spinDirection <= MinSpin)
+            {
+                _spinClockwise = true;
+            }
+
+            if (_spinClockwise)
+            {
+                _spinDirection += SpinStep;
+            }
+            else
+            {
+                _spinDirection -= SpinStep;
+            }
+
+            _motorSensorSpinner.MoveTo(SpinningSpeed, _spinDirection, true, false);
         }
 
         public bool ObjectDetected()
