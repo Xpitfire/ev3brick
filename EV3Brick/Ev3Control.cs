@@ -6,6 +6,7 @@ namespace PrgSps2Gr1
 {
     class Ev3Control
     {
+        
         private const float MinObjectDistanceDelta = 100F;
         private const int OffSet = 10;
         private readonly Vehicle _vehicle;
@@ -14,6 +15,13 @@ namespace PrgSps2Gr1
         private readonly Lcd _lcd;
         private Point _point = new Point(0, 0);
         private readonly EV3ColorSensor _colorSensor;
+        private Color _savedColor;
+
+        public Color SavedColor
+        {
+            set { _savedColor = value; }
+            get { return _savedColor; }
+        }
 
         public Ev3Control()
         {
@@ -92,7 +100,7 @@ namespace PrgSps2Gr1
             _lcd.Update(OffSet);
         }
 
-        public Color GetColor()
+        public Color ScanColor()
         {
             return _colorSensor.ReadColor();
         }

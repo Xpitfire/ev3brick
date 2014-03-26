@@ -12,6 +12,7 @@ namespace PrgSps2Gr1
 
         protected override void PerformAction()
         {
+            Ev3.SavedColor = Ev3.ScanColor();
             SetState(new NormalDriveImpl());
         }
 
