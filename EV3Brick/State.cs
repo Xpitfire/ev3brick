@@ -78,7 +78,7 @@ namespace PrgSps2Gr1
         public void Exit()
         {
             _ev3.WriteLine("Stopping motors");
-            _ev3.VehicleStop();
+            _ev3.StopAllMovements();
             _ev3.WriteLine("Exiting application...");
             _controller.Exit();
         }

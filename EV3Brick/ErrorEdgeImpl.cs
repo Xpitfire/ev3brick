@@ -4,14 +4,18 @@ namespace PrgSps2Gr1
 {
     class ErrorEdgeImpl : State
     {
+        private readonly int _timeout = Environment.TickCount + 2000;
+        
+        private bool Timeout()
+        {
+            return Environment.TickCount > _timeout;
+        }
+
         protected override void PerformAction()
         {
-            if (Ev3.ReachedEdge())
-            {
-                Ev3.VehicleReverse(Ev3Control.TurnDirection.Left, 25, 90);
-            }
-            else
-            {
+            Ev3.VehicleReverse(Ev3Control.TurnDirection.Left, 25, 90);
+            
+            if (Timeout()) {
                 SetState(new NormalDriveImpl());
             }
         }

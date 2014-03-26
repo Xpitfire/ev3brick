@@ -7,20 +7,18 @@ namespace PrgSps2Gr1
     class Ev3Control
     {  
         private const float MinObjectDistanceDelta = 100F;
-        private const int OffSet = 10;
         private const int SpinningSpeed = 5;
         private readonly Vehicle _vehicle;
         private readonly IRSensor _irSensor;
         private readonly UltraSonicSensor _ultraSonicSensor;
         private readonly Lcd _lcd;
         private readonly TouchSensor _touchSensor;
-        private Point _point;
-        private readonly EV3ColorSensor _colorSensor;
+        private readonly NXTColorSensor _colorSensor;
         private readonly Motor _motorSensorSpinner;
         private int _spinDirection;
         private bool _spinClockwise;
-        private const int MinSpin = -90;
-        private const int MaxSpin = 90;
+        private const int MinSpin = -35;
+        private const int MaxSpin = 35;
         private const int SpinStep = 5;
 
 
@@ -42,17 +40,18 @@ namespace PrgSps2Gr1
 
             // init sensors
             _irSensor = new IRSensor(SensorPort.In1);
-            _ultraSonicSensor = new UltraSonicSensor(SensorPort.In2, UltraSonicMode.Centimeter);
-            _colorSensor = new EV3ColorSensor(SensorPort.In2, ColorMode.Color);
-            _touchSensor = new TouchSensor(SensorPort.In3);
+            //_ultraSonicSensor = new UltraSonicSensor(SensorPort.In2, UltraSonicMode.Centimeter);
+            _colorSensor = new NXTColorSensor(SensorPort.In2);
+            _colorSensor.Mode = ColorMode.Ambient;
+            _touchSensor = new TouchSensor(SensorPort.In1);
 
             // init display
-            _point = new Point(0, 0);
             _lcd = new Lcd();
             _lcd.Clear();
 
             // init ev3 default settings
             _spinDirection = 0;
+            _motorSensorSpinner.ResetTacho();
             _spinClockwise = true;
         }
 
@@ -91,6 +90,12 @@ namespace PrgSps2Gr1
             }
         }
 
+        public void StopAllMovements()
+        {
+            VehicleStop();
+            _motorSensorSpinner.Off();
+        }
+
         public void VehicleStop()
         {
             _vehicle.Off();
@@ -103,6 +108,7 @@ namespace PrgSps2Gr1
 
         public void SpinScanner(bool active)
         {
+            
             if (!active) return;
 
             if (_spinDirection >= MaxSpin)
@@ -122,30 +128,22 @@ namespace PrgSps2Gr1
             {
                 _spinDirection -= SpinStep;
             }
-
-            _motorSensorSpinner.MoveTo(SpinningSpeed, _spinDirection, true, false);
+            
+            
+            //_motorSensorSpinner.MoveTo(SpinningSpeed, _spinDirection, false, false);
+            //WriteLine("Des is -->" + _motorSensorSpinner.GetTachoCount());
+            WriteLine(_colorSensor.ReadRaw().ToString());
+             
         }
 
         public bool ObjectDetected()
         {
-            return _ultraSonicSensor.ReadDistance() < MinObjectDistanceDelta;
+            return false;
         }
 
         public void WriteLine(string s)
         {
-            if (_point.Y <= (Lcd.Height - 2 * OffSet))
-            {
-                _point.Y += OffSet;
-            }
-            else
-            {
-                _lcd.Clear();
-                _point.Y = OffSet;
-                _lcd.Update(OffSet);
-            }
-            
-            _lcd.WriteText(Font.SmallFont, _point, s, true);
-            _lcd.Update(OffSet);
+            LcdConsole.WriteLine(s);
         }
 
         public Color ScanColor()

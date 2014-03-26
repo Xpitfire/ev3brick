@@ -6,7 +6,7 @@ namespace PrgSps2Gr1
     {
         protected override void PerformAction()
         {
-            Ev3.VehicleDrive((sbyte) Ev3Control.Speed.Medium);
+            Ev3.VehicleDrive((sbyte) Ev3Control.Speed.Slow);
         }
 
         public override String ToString()

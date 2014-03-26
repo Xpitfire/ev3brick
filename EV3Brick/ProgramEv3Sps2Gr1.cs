@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using MonoBrickFirmware.Display;
 
 namespace PrgSps2Gr1
 {
@@ -40,8 +41,16 @@ namespace PrgSps2Gr1
 
         public static void Main()
         {
-            var prg = new ProgramEv3Sps2Gr1();
-            prg.Run();
+            try
+            {
+                var prg = new ProgramEv3Sps2Gr1();
+                prg.Run();
+            }
+            catch (Exception ex)
+            {
+                LcdConsole.WriteLine("Exception occured!" + ex.Message); 
+                Thread.Sleep(10000); 
+            }
         }
 
     }
