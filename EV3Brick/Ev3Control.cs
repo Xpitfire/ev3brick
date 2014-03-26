@@ -6,17 +6,24 @@ using System;
 namespace PrgSps2Gr1
 {
     class Ev3Control
-    {
-        
+    {  
         private const float MinObjectDistanceDelta = 100F;
         private const int OffSet = 10;
+        private const int SpinningSpeed = 5;
         private readonly Vehicle _vehicle;
         private readonly IRSensor _irSensor;
         private readonly UltraSonicSensor _ultraSonicSensor;
         private readonly Lcd _lcd;
-        private Point _point = new Point(0, 0);
+        private Point _point;
         private readonly EV3ColorSensor _colorSensor;
         private Color _savedColor;
+        private Motor _motorSensorSpinner;
+        private int _spinDirection;
+        private bool _spinClockwise;
+        private const int MinSpin = -90;
+        private const int MaxSpin = 90;
+        private const int SpinStep = 5;
+
 
         public enum Speed 
         {
@@ -40,6 +47,10 @@ namespace PrgSps2Gr1
             _lcd = new Lcd();
             _lcd.Clear();
             _colorSensor = new EV3ColorSensor(SensorPort.In2, ColorMode.Color);
+            _motorSensorSpinner = new Motor(MotorPort.OutB);
+            _point = new Point(0, 0);
+            _spinDirection = 0;
+            _spinClockwise = true;
         }
 
         public void VehicleDrive(sbyte speed)
@@ -85,6 +96,32 @@ namespace PrgSps2Gr1
         public bool ReachedEdge()
         {
             return _irSensor.Read() < 30;
+        }
+
+        public void SpinScanner(bool active)
+        {   
+            if (active)
+            {
+                if (_spinDirection >= MaxSpin)
+                {
+                    _spinClockwise = false;
+                }
+                if (_spinDirection <= MinSpin)
+                {
+                    _spinClockwise = true;
+                }
+
+                if (_spinClockwise)
+                {
+                    _spinDirection += SpinStep;
+                }
+                else
+                {
+                    _spinDirection -= SpinStep;
+                }
+
+                _motorSensorSpinner.MoveTo(SpinningSpeed, _spinDirection, true, false);
+            }
         }
 
         public bool ObjectDetected()

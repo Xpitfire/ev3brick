@@ -43,6 +43,8 @@ namespace PrgSps2Gr1
 
         public void Update()
         {
+            // spins sensor to detect environment
+            Ev3.SpinScanner(true);
             // handle general events befor starting implementation performed actions --> PerformAction()
             if (Ev3.ReachedEdge() && !(_controller.ControllerState is ErrorEdgeImpl))
             {
