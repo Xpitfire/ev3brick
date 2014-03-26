@@ -13,6 +13,7 @@ namespace PrgSps2Gr1
         private readonly UltraSonicSensor _ultraSonicSensor;
         private readonly Lcd _lcd;
         private Point _point = new Point(0, 0);
+        private readonly EV3ColorSensor _colorSensor;
 
         public Ev3Control()
         {
@@ -21,6 +22,7 @@ namespace PrgSps2Gr1
             _ultraSonicSensor = new UltraSonicSensor(SensorPort.In2, UltraSonicMode.Centimeter);
             _lcd = new Lcd();
             _lcd.Clear();
+            _colorSensor = new EV3ColorSensor(SensorPort.In2, ColorMode.Color);
         }
 
         public void VehicleDrive(sbyte speed)
@@ -90,5 +92,9 @@ namespace PrgSps2Gr1
             _lcd.Update(OffSet);
         }
 
+        public Color GetColor()
+        {
+            return _colorSensor.ReadColor();
+        }
     }
 }
