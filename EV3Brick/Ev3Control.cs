@@ -38,6 +38,7 @@ namespace PrgSps2Gr1
             _motorSensorSpinner = new Motor(MotorPort.OutB);
             _vehicle = new Vehicle(MotorPort.OutA, MotorPort.OutD);
 
+            // TODO set correct sensor ports for the IR- and color sensor 
             // init sensors
             _irSensor = new IRSensor(SensorPort.In1);
             //_ultraSonicSensor = new UltraSonicSensor(SensorPort.In2, UltraSonicMode.Centimeter);
