@@ -39,7 +39,7 @@ namespace PrgSps2Gr1
             _vehicle = new Vehicle(MotorPort.OutA, MotorPort.OutD);
 
             // init sensors
-            _irSensor = new IRSensor(SensorPort.In1);
+            //_irSensor = new IRSensor(SensorPort.In?);
             //_ultraSonicSensor = new UltraSonicSensor(SensorPort.In2, UltraSonicMode.Centimeter);
             _colorSensor = new NXTColorSensor(SensorPort.In2);
             _colorSensor.Mode = ColorMode.Ambient;
