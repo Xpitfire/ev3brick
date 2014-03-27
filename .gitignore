@@ -1,4 +1,5 @@
 ﻿/EV3Brick/bin/Debug
 /EV3Brick/obj/Debug
-/EV3Brick/bin/Debug
+/EV3Brick/bin/Release
+/EV3Brick/obj/Release
 *.suo
