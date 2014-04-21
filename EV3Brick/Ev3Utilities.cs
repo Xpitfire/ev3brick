@@ -38,9 +38,10 @@ namespace PrgSps2Gr1
             _motorSensorSpinner = new Motor(MotorPort.OutB);
             _vehicle = new Vehicle(MotorPort.OutA, MotorPort.OutD);
 
+            // ---------------------  !! check sensor ports !! ------------------
             // TODO set correct sensor ports for the IR- and color sensor 
             // init sensors
-            //_irSensor = new IRSensor(SensorPort.In?);
+            _irSensor = new IRSensor(SensorPort.In4);
             //_ultraSonicSensor = new UltraSonicSensor(SensorPort.In2, UltraSonicMode.Centimeter);
             _colorSensor = new NXTColorSensor(SensorPort.In2);
             _colorSensor.Mode = ColorMode.Ambient;
@@ -137,9 +138,9 @@ namespace PrgSps2Gr1
              
         }
 
-        public bool ObjectDetected()
+        public bool ObjectDetected(int atDistance)
         {
-            return false;
+            return _irSensor.ReadDistance() < atDistance ? true : false ;
         }
 
         public void WriteLine(string s)
