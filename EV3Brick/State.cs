@@ -18,13 +18,13 @@ namespace PrgSps2Gr1
             set { throw new System.NotImplementedException(); }
         }
 
-
         protected Ev3Utilities Ev3
         {
             get { return _ev3 ?? (_ev3 = new Ev3Utilities()); }
         }
 
         private static ProgramEv3Sps2Gr1 _controller;
+
         protected ProgramEv3Sps2Gr1 Controller
         {
             set
@@ -36,16 +36,26 @@ namespace PrgSps2Gr1
             get { return _controller; }
         }
 
+        /// <summary>
+        /// State constructor to inistialize the base class instances.
+        /// </summary>
         protected State()
         {
             _buttonEvents = new ButtonEvents();
-
+            // add ananymouse method action to event queue
             _buttonEvents.EscapeReleased += () => EventQueue.Primary.Enqueue(Exit);
             _buttonEvents.EnterReleased += () => EventQueue.Primary.Enqueue(PauseOrResume);
         }
 
+        /// <summary>
+        /// Mothod to override from the implementing sub-classes.
+        /// </summary>
         protected abstract void PerformAction();
 
+        /// <summary>
+        /// Sets a new state instance in the controller.
+        /// </summary>
+        /// <param name="newState"></param>
         protected void SetState(State newState)
         {
             if (Equals(newState)) return;
@@ -53,6 +63,9 @@ namespace PrgSps2Gr1
             _controller.ControllerState = newState;
         }
 
+        /// <summary>
+        /// Update sequence called by the controller.
+        /// </summary>
         public void Update()
         {
 			// dequeue events from a primary event queue until it's empty and then check the secondary
@@ -83,6 +96,10 @@ namespace PrgSps2Gr1
            
         }
         
+        /// <summary>
+        /// Set the controller state to a pause sequence.
+        /// TODO Has a resume bug!
+        /// </summary>
         public void PauseOrResume()
         {
             if (_controller.ControllerState is NormalPauseImpl)
@@ -96,10 +113,15 @@ namespace PrgSps2Gr1
             }
         }
 
+        /// <summary>
+        /// Sets the controller state to exit the program.
+        /// </summary>
         public void Exit()
         {
             SetState(new ExitProgramImpl());
         }
+
+        // ----- default class implementation methods -----
 
         public override bool Equals(object other)
         {
