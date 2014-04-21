@@ -43,14 +43,14 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ErrorEdgeImpl.cs" />
+    <Compile Include="States\Error\ErrorEdgeImpl.cs" />
     <Compile Include="ExitProgramImpl.cs" />
-    <Compile Include="NormalObjectDetectedImpl.cs" />
-    <Compile Include="NormalPauseImpl.cs" />
+    <Compile Include="States\Normal\NormalObjectDetectedImpl.cs" />
+    <Compile Include="States\Normal\NormalPauseImpl.cs" />
     <Compile Include="ProgramEv3Sps2Gr1.cs" />
     <Compile Include="Ev3Utilities.cs" />
-    <Compile Include="InitStartupImpl.cs" />
-    <Compile Include="NormalDriveImpl.cs" />
+    <Compile Include="States\Init\InitStartupImpl.cs" />
+    <Compile Include="States\Normal\NormalDriveImpl.cs" />
     <Compile Include="State.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

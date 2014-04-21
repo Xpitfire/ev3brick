@@ -59,7 +59,7 @@ namespace PrgSps2Gr1
             {
                 SetState(new ErrorEdgeImpl());
             }
-            else if (Ev3.ObjectDetected() && !(_controller.ControllerState is NormalObjectDetectedImpl))
+            else if (Ev3.ObjectDetected(100) && !(_controller.ControllerState is NormalObjectDetectedImpl))
             {
                 SetState(new NormalObjectDetectedImpl());
             }
