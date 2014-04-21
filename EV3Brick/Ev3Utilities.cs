@@ -56,6 +56,10 @@ namespace PrgSps2Gr1
 			_spinClockwise = true;
         }
 
+		/// <summary>
+		/// Drive straight with the given speed.
+		/// </summary>
+		/// <param name="speed">Speed.</param>
         public void VehicleDrive(sbyte speed)
         {
             _vehicle.ReverseLeft = false;
@@ -91,17 +95,23 @@ namespace PrgSps2Gr1
             }
         }
 
+		/// <summary>
+		/// Stops all movements.
+		/// </summary>
         public void StopAllMovements()
         {
             VehicleStop();
             _motorSensorSpinner.Off();
         }
 
+		/// <summary>
+		/// Stops the robot.
+		/// </summary>
         public void VehicleStop()
         {
             _vehicle.Off();
         }
-
+			
         public bool ReachedEdge()
         {
             return _touchSensor.IsPressed();
@@ -138,16 +148,29 @@ namespace PrgSps2Gr1
              
         }
 
+		/// <summary>
+		/// Check if a object is detected using the IR sensor.
+		/// </summary>
+		/// <returns><c>true</c>, if detected was objected, <c>false</c> otherwise.</returns>
+		/// <param name="atDistance">At distance.</param>
         public bool ObjectDetected(int atDistance)
         {
             return _irSensor.ReadDistance() < atDistance ? true : false ;
         }
 
+		/// <summary>
+		/// Writes the line to the EV3 Screen.
+		/// </summary>
+		/// <param name="s">S.</param>
         public void WriteLine(string s)
         {
             LcdConsole.WriteLine(s);
         }
 
+		/// <summary>
+		/// Read the color value of the color sensor.
+		/// </summary>
+		/// <returns>A color or none.</returns>
         public Color ScanColor()
         {
             return _colorSensor.ReadColor();
