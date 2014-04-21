@@ -7,11 +7,19 @@ namespace PrgSps2Gr1
     {
 
         private readonly ButtonEvents _buttonEvents;
+        private static Ev3Utilities _ev3;
+        private State _resumeState;
 
-        private static Ev3Control _ev3;
-        protected Ev3Control Ev3
+        protected int DetectedObjectDegree
         {
-            get { return _ev3 ?? (_ev3 = new Ev3Control()); }
+            get { throw new System.NotImplementedException(); }
+            set { throw new System.NotImplementedException(); }
+        }
+
+
+        protected Ev3Utilities Ev3
+        {
+            get { return _ev3 ?? (_ev3 = new Ev3Utilities()); }
         }
 
         private static ProgramEv3Sps2Gr1 _controller;
@@ -23,6 +31,7 @@ namespace PrgSps2Gr1
                 Ev3.WriteLine("Set new controller!");
                 _controller = value;
             }
+            get { return _controller; }
         }
 
         protected State()
@@ -60,8 +69,6 @@ namespace PrgSps2Gr1
             }
         }
 
-        private State _resumeState;
-
         public void PauseOrResume()
         {
             if (_controller.ControllerState is NormalPauseImpl)
@@ -77,10 +84,7 @@ namespace PrgSps2Gr1
 
         public void Exit()
         {
-            _ev3.WriteLine("Stopping motors");
-            _ev3.StopAllMovements();
-            _ev3.WriteLine("Exiting application...");
-            _controller.Exit();
+            SetState(new ExitProgramImpl());
         }
 
         public override bool Equals(object other)

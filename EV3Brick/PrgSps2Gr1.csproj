@@ -44,10 +44,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ErrorEdgeImpl.cs" />
+    <Compile Include="ExitProgramImpl.cs" />
     <Compile Include="NormalObjectDetectedImpl.cs" />
     <Compile Include="NormalPauseImpl.cs" />
     <Compile Include="ProgramEv3Sps2Gr1.cs" />
-    <Compile Include="Ev3Control.cs" />
+    <Compile Include="Ev3Utilities.cs" />
     <Compile Include="InitStartupImpl.cs" />
     <Compile Include="NormalDriveImpl.cs" />
     <Compile Include="State.cs" />

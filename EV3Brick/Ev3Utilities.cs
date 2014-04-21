@@ -4,10 +4,10 @@ using MonoBrickFirmware.Sensors;
 
 namespace PrgSps2Gr1
 {
-    class Ev3Control
+    class Ev3Utilities
     {  
         private const float MinObjectDistanceDelta = 100F;
-        private const int SpinningSpeed = 5;
+        private const int SpinningSpeed = 10;
         private readonly Vehicle _vehicle;
         private readonly IRSensor _irSensor;
         private readonly UltraSonicSensor _ultraSonicSensor;
@@ -15,7 +15,7 @@ namespace PrgSps2Gr1
         private readonly TouchSensor _touchSensor;
         private readonly NXTColorSensor _colorSensor;
         private readonly Motor _motorSensorSpinner;
-        private int _spinDirection;
+        private int _spinDegree;
         private bool _spinClockwise;
         private const int MinSpin = -35;
         private const int MaxSpin = 35;
@@ -32,7 +32,7 @@ namespace PrgSps2Gr1
 
         public Color SavedColor { get; set; }
 
-        public Ev3Control()
+        public Ev3Utilities()
         {
             // init motors
             _motorSensorSpinner = new Motor(MotorPort.OutB);
@@ -51,7 +51,7 @@ namespace PrgSps2Gr1
             _lcd.Clear();
 
             // init ev3 default settings
-            _spinDirection = 0;
+            _spinDegree = 0;
             _motorSensorSpinner.ResetTacho();
             _spinClockwise = true;
         }
@@ -112,26 +112,26 @@ namespace PrgSps2Gr1
             
             if (!active) return;
 
-            if (_spinDirection >= MaxSpin)
+            if (_spinDegree >= MaxSpin)
             {
                 _spinClockwise = false;
             }
-            if (_spinDirection <= MinSpin)
+            if (_spinDegree <= MinSpin)
             {
                 _spinClockwise = true;
             }
 
             if (_spinClockwise)
             {
-                _spinDirection += SpinStep;
+                _spinDegree += SpinStep;
             }
             else
             {
-                _spinDirection -= SpinStep;
+                _spinDegree -= SpinStep;
             }
             
             
-            //_motorSensorSpinner.MoveTo(SpinningSpeed, _spinDirection, false, false);
+            _motorSensorSpinner.MoveTo(SpinningSpeed, _spinDegree, false, false);
             //WriteLine("Des is -->" + _motorSensorSpinner.GetTachoCount());
             WriteLine(_colorSensor.ReadRaw().ToString());
              

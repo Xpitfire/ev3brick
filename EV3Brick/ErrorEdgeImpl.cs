@@ -13,7 +13,7 @@ namespace PrgSps2Gr1
 
         protected override void PerformAction()
         {
-            Ev3.VehicleReverse(Ev3Control.TurnDirection.Left, 25, 90);
+            Ev3.VehicleReverse(Ev3Utilities.TurnDirection.Left, 25, 90);
             
             if (Timeout()) {
                 SetState(new NormalDriveImpl());
