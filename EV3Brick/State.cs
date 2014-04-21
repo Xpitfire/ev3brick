@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
 using MonoBrickFirmware.UserInput;
 
 namespace PrgSps2Gr1
@@ -46,9 +45,6 @@ namespace PrgSps2Gr1
             // add ananymouse method action to event queue
             _buttonEvents.EscapeReleased += () => EventQueue.Primary.Enqueue(Exit);
             _buttonEvents.EnterReleased += () => EventQueue.Primary.Enqueue(PauseOrResume);
-            // start the general sensor monitoring thread
-            var thread = new Thread(new ThreadStart(WorkThreadFunction));
-            thread.Start();
         }
 
         /// <summary>

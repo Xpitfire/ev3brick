@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace PrgSps2Gr1
 {
@@ -8,6 +9,9 @@ namespace PrgSps2Gr1
         public InitStartupImpl(ProgramEv3Sps2Gr1 project)
         {
             Controller = project;
+			// start the general sensor monitoring thread
+			var thread = new Thread(new ThreadStart(WorkThreadFunction));
+			thread.Start();
         }
 
         protected override void PerformAction()
