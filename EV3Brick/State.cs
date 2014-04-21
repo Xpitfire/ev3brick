@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using MonoBrickFirmware.UserInput;
 
 namespace PrgSps2Gr1
@@ -45,6 +46,9 @@ namespace PrgSps2Gr1
             // add ananymouse method action to event queue
             _buttonEvents.EscapeReleased += () => EventQueue.Primary.Enqueue(Exit);
             _buttonEvents.EnterReleased += () => EventQueue.Primary.Enqueue(PauseOrResume);
+            // start the general sensor monitoring thread
+            var thread = new Thread(new ThreadStart(WorkThreadFunction));
+            thread.Start();
         }
 
         /// <summary>
@@ -81,11 +85,7 @@ namespace PrgSps2Gr1
             // spins sensor to detect environment
             Ev3.SpinScanner(true);
             // handle general events befor starting implementation performed actions --> PerformAction()
-            if (Ev3.ReachedEdge() && !(_controller.ControllerState is ErrorEdgeImpl))
-            {
-                SetState(new ErrorEdgeImpl());
-            }
-			else if (Ev3.ObjectDetected(15) && !(_controller.ControllerState is NormalObjectDetectedImpl))
+            if (Ev3.ObjectDetected(15) && !(_controller.ControllerState is NormalObjectDetectedImpl))
             {
                 SetState(new NormalObjectDetectedImpl());
             }
@@ -113,12 +113,42 @@ namespace PrgSps2Gr1
             }
         }
 
+        private void GotoErrorEdge()
+        {
+            SetState(new ErrorEdgeImpl());
+        }
+
         /// <summary>
         /// Sets the controller state to exit the program.
         /// </summary>
         public void Exit()
         {
             SetState(new ExitProgramImpl());
+        }
+
+        // ----- special event update thread for state behavior -----
+
+        /// <summary>
+        /// Update thread to wrap the polling of sensor behaviors to a event base 
+        /// system.
+        /// </summary>
+        public void WorkThreadFunction()
+        {
+            while (_controller.IsAlive)
+            {
+                try
+                {
+                    if (Ev3.ReachedEdge() && !(_controller.ControllerState is ErrorEdgeImpl))
+                    {
+                        EventQueue.Secondary.Enqueue(GotoErrorEdge);
+                    }
+                }
+                catch (Exception)
+                {
+                    Ev3.WriteLine("Sensor-Update-Thread died!");
+                    // continue process
+                }
+            }
         }
 
         // ----- default class implementation methods -----

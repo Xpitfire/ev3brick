@@ -10,6 +10,11 @@ namespace PrgSps2Gr1
         private State _curState;
         private Boolean _isAlive;
 
+        public bool IsAlive 
+        {
+            get { return _isAlive; }
+        }
+
 		/// <summary>
 		/// Initializes the robot instance. <See cref="PrgSps2Gr1.ProgramEv3Sps2Gr1"/> class.
 		/// </summary>
