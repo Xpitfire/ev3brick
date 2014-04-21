@@ -149,7 +149,7 @@ namespace PrgSps2Gr1
         }
 
 		/// <summary>
-		/// Check if a object is detected using the IR sensor.
+		/// Check if a object is detected by using the IR sensor.
 		/// </summary>
 		/// <returns><c>true</c>, if detected was objected, <c>false</c> otherwise.</returns>
 		/// <param name="atDistance">At distance.</param>
