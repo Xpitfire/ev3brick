@@ -35,7 +35,7 @@ namespace PrgSps2Gr1
 
         public Ev3Utilities()
         {
-            // init motors
+			// init motors
             _motorSensorSpinner = new Motor(MotorPort.OutB);
             _vehicle = new Vehicle(MotorPort.OutA, MotorPort.OutD);
 
@@ -53,7 +53,7 @@ namespace PrgSps2Gr1
             // init ev3 default settings
             _spinDegree = 0;
             _motorSensorSpinner.ResetTacho();
-            _spinClockwise = true;
+			_spinClockwise = true;
         }
 
         public void VehicleDrive(sbyte speed)
@@ -131,8 +131,9 @@ namespace PrgSps2Gr1
             }
             
             
-            _motorSensorSpinner.MoveTo(SpinningSpeed, _spinDegree, false, false);
-            //WriteLine("Des is -->" + _motorSensorSpinner.GetTachoCount());
+			_motorSensorSpinner.MoveTo(SpinningSpeed, _spinDegree, false, false);
+			//_motorSensorSpinner.On (SpinningSpeed, (uint)_spinDegree, false, false);
+			//WriteLine("Des is -->" + _motorSensorSpinner.GetTachoCount());
 			WriteLine("color: " + _colorSensor.ReadColor());
 			WriteLine("  raw: " + _colorSensor.ReadRaw().ToString());
              
