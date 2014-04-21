@@ -1,4 +1,5 @@
-﻿using MonoBrickFirmware.Display;
+﻿using System;
+using MonoBrickFirmware.Display;
 using MonoBrickFirmware.Movement;
 using MonoBrickFirmware.Sensors;
 
@@ -151,5 +152,19 @@ namespace PrgSps2Gr1
         {
             return _colorSensor.ReadColor();
         }
+
+        public void WorkThreadFunction()
+        {
+            try
+            {
+                
+            }
+            catch (Exception)
+            {
+                WriteLine("Sensor-Update-Thread died!");
+            }
+        }
+
+
     }
 }

@@ -7,9 +7,9 @@ namespace PrgSps2Gr1
 {
     abstract class State
     {
-        private readonly Queue<Action> _queue = new Queue<Action>();
         private readonly ButtonEvents _buttonEvents;
         private static Ev3Utilities _ev3;
+
         private State _resumeState;
 
         protected int DetectedObjectDegree
@@ -40,8 +40,8 @@ namespace PrgSps2Gr1
         {
             _buttonEvents = new ButtonEvents();
 
-            _buttonEvents.EscapeReleased += EnqueueExit;
-            _buttonEvents.EnterReleased += EnqueuePause;
+            _buttonEvents.EscapeReleased += () => EventQueue.Primary.Enqueue(Exit);
+            _buttonEvents.EnterReleased += () => EventQueue.Primary.Enqueue(PauseOrResume);
         }
 
         protected abstract void PerformAction();
@@ -55,11 +55,15 @@ namespace PrgSps2Gr1
 
         public void Update()
         {
-			// dequeue an event if available
-			if (_queue.Count > 0)
+			// dequeue events from a primary event queue until it's empty and then check the secondary
+			if (EventQueue.Primary.Count > 0)
 			{
-				_queue.Dequeue()();
+				EventQueue.Primary.Dequeue()();
 			}
+            else if (EventQueue.Secondary.Count > 0)
+            {
+                EventQueue.Secondary.Dequeue()();
+            }
 
             // spins sensor to detect environment
             Ev3.SpinScanner(true);
@@ -78,12 +82,7 @@ namespace PrgSps2Gr1
             }
            
         }
-
-        private void EnqueuePause()
-        {
-			_queue.Enqueue(PauseOrResume);
-        }
-
+        
         public void PauseOrResume()
         {
             if (_controller.ControllerState is NormalPauseImpl)
@@ -95,11 +94,6 @@ namespace PrgSps2Gr1
                 _resumeState = _controller.ControllerState;
                 SetState(new NormalPauseImpl());
             }
-        }
-
-        private void EnqueueExit()
-        {
-            _queue.Enqueue(Exit);
         }
 
         public void Exit()

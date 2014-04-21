@@ -43,6 +43,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EventQueue.cs" />
     <Compile Include="States\Error\ErrorEdgeImpl.cs" />
     <Compile Include="ExitProgramImpl.cs" />
     <Compile Include="States\Normal\NormalObjectDetectedImpl.cs" />
