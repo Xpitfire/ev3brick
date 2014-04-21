@@ -130,7 +130,7 @@ namespace PrgSps2Gr1
                 _spinDegree -= SpinStep;
             }
             
-			_motorSensorSpinner.MoveTo(SpinningSpeed, _spinDegree, false, false);
+			//_motorSensorSpinner.MoveTo(SpinningSpeed, _spinDegree, false, false);
 			//_motorSensorSpinner.On (SpinningSpeed, (uint)_spinDegree, false, false);
 			//WriteLine("Des is -->" + _motorSensorSpinner.GetTachoCount());
 			WriteLine("color: " + _colorSensor.ReadColor());
