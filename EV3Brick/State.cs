@@ -1,11 +1,13 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using MonoBrickFirmware.UserInput;
 
 namespace PrgSps2Gr1
 {
     abstract class State
     {
-
+        private readonly Queue<Action> _queue = new Queue<Action>();
         private readonly ButtonEvents _buttonEvents;
         private static Ev3Utilities _ev3;
         private State _resumeState;
@@ -37,8 +39,9 @@ namespace PrgSps2Gr1
         protected State()
         {
             _buttonEvents = new ButtonEvents();
-            _buttonEvents.EscapeReleased += Exit;
-            _buttonEvents.EnterReleased += PauseOrResume;
+
+            _buttonEvents.EscapeReleased += EnqueueExit;
+            _buttonEvents.EnterReleased += EnqueuePause;
         }
 
         protected abstract void PerformAction();
@@ -52,6 +55,12 @@ namespace PrgSps2Gr1
 
         public void Update()
         {
+            // enqueue an event if available
+            if (_queue.Count > 0)
+            {
+                _queue.Dequeue()();
+            }
+
             // spins sensor to detect environment
             Ev3.SpinScanner(true);
             // handle general events befor starting implementation performed actions --> PerformAction()
@@ -69,6 +78,11 @@ namespace PrgSps2Gr1
             }
         }
 
+        private void EnqueuePause()
+        {
+            _queue.Enqueue(Exit);
+        }
+
         public void PauseOrResume()
         {
             if (_controller.ControllerState is NormalPauseImpl)
@@ -80,6 +94,11 @@ namespace PrgSps2Gr1
                 _resumeState = _controller.ControllerState;
                 SetState(new NormalPauseImpl());
             }
+        }
+
+        private void EnqueueExit()
+        {
+            _queue.Enqueue(Exit);
         }
 
         public void Exit()
