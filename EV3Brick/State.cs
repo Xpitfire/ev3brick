@@ -49,12 +49,18 @@ namespace PrgSps2Gr1
         protected void SetState(State newState)
         {
             if (Equals(newState)) return;
-            Ev3.WriteLine("StateChanged: " + newState);
+			Ev3.WriteLine("StateChanged: " + newState);
             _controller.ControllerState = newState;
         }
 
         public void Update()
         {
+			// dequeue an event if available
+			if (_queue.Count > 0)
+			{
+				_queue.Dequeue()();
+			}
+
             // spins sensor to detect environment
             Ev3.SpinScanner(true);
             // handle general events befor starting implementation performed actions --> PerformAction()
@@ -62,7 +68,7 @@ namespace PrgSps2Gr1
             {
                 SetState(new ErrorEdgeImpl());
             }
-            else if (Ev3.ObjectDetected(100) && !(_controller.ControllerState is NormalObjectDetectedImpl))
+			else if (Ev3.ObjectDetected(15) && !(_controller.ControllerState is NormalObjectDetectedImpl))
             {
                 SetState(new NormalObjectDetectedImpl());
             }
@@ -70,17 +76,12 @@ namespace PrgSps2Gr1
             {
                 PerformAction();
             }
-            
-            // dequeue an event if available
-            if (_queue.Count > 0)
-            {
-                _queue.Dequeue()();
-            }
+           
         }
 
         private void EnqueuePause()
         {
-            _queue.Enqueue(Exit);
+			_queue.Enqueue(PauseOrResume);
         }
 
         public void PauseOrResume()
