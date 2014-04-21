@@ -13,7 +13,7 @@ namespace PrgSps2Gr1
         private readonly UltraSonicSensor _ultraSonicSensor;
         private readonly Lcd _lcd;
         private readonly TouchSensor _touchSensor;
-        private readonly NXTColorSensor _colorSensor;
+		private readonly  EV3ColorSensor _colorSensor; //NXTColorSensor _colorSensor;
         private readonly Motor _motorSensorSpinner;
         private int _spinDegree;
         private bool _spinClockwise;
@@ -41,9 +41,9 @@ namespace PrgSps2Gr1
             // init sensors
             _irSensor = new IRSensor(SensorPort.In4);
             //_ultraSonicSensor = new UltraSonicSensor(SensorPort.In2, UltraSonicMode.Centimeter);
-            _colorSensor = new NXTColorSensor(SensorPort.In2);
-            _colorSensor.Mode = ColorMode.Ambient;
-            _touchSensor = new TouchSensor(SensorPort.In1);
+			_colorSensor = new EV3ColorSensor (SensorPort.In1, ColorMode.Color);  //new NXTColorSensor(SensorPort.In2);
+			//_colorSensor.Mode = ColorMode.Ambient;
+			_touchSensor = new TouchSensor(SensorPort.In2);
 
             // init display
             _lcd = new Lcd();
@@ -132,7 +132,8 @@ namespace PrgSps2Gr1
             
             _motorSensorSpinner.MoveTo(SpinningSpeed, _spinDegree, false, false);
             //WriteLine("Des is -->" + _motorSensorSpinner.GetTachoCount());
-            WriteLine(_colorSensor.ReadRaw().ToString());
+			WriteLine("color: " + _colorSensor.ReadColor());
+			WriteLine("  raw: " + _colorSensor.ReadRaw().ToString());
              
         }
 
