@@ -3,11 +3,13 @@ using System.Threading;
 using MonoBrickFirmware.Display;
 using MonoBrickFirmware.Movement;
 using MonoBrickFirmware.Sensors;
+using MonoBrickFirmware.UserInput;
 
-namespace PrgSps2Gr1
+namespace PrgSps2Gr1.Control
 {
-    class Ev3Utilities
+    class Ev3ControlImpl : IControl
     {
+        private readonly ButtonEvents _buttonEvents;
         private const float MinObjectDistanceDelta = 100F;
         private const int SpinningSpeed = 10;
         private readonly Vehicle _vehicle;
@@ -37,12 +39,23 @@ namespace PrgSps2Gr1
         {
             Left, Right
         }
+
+        // ----- class events -----
+
+        public event Action EscapeReleasedButtonEvent;
+        public event Action EnterReleasedButtonEvent;
+        public event Action ReachedEdgeEvent;
         
-        public Ev3Utilities()
+        public Ev3ControlImpl()
         {
             // start the general sensor monitoring thread
             var thread = new Thread(SensorMonitorWorkThread);
             thread.Start();
+
+            // init ev3 button events
+            _buttonEvents = new ButtonEvents();
+            _buttonEvents.EscapeReleased += EscapeReleasedButtonEvent;
+            _buttonEvents.EnterReleased += EnterReleasedButtonEvent;
 
             // init motors
             _motorSensorSpinner = new Motor(MotorPort.OutB);
@@ -65,8 +78,7 @@ namespace PrgSps2Gr1
 			_spinClockwise = true;
         }
 
-        // ----- declare events -----
-        public event Action ReachedEdgeEvent;
+        // ----- events call implementation -----
 
         protected virtual void OnReachedEdgeEvent()
         {
@@ -164,7 +176,7 @@ namespace PrgSps2Gr1
 		/// <param name="atDistance">At distance.</param>
         public bool ObjectDetected(int atDistance)
         {
-            return _irSensor.ReadDistance() < atDistance ? true : false ;
+            return _irSensor.ReadDistance() < atDistance ;
         }
 
 		/// <summary>
@@ -209,5 +221,14 @@ namespace PrgSps2Gr1
             }
         }
 
+        public void Log()
+        {
+            throw new NotImplementedException();
+        }
+
+        public object[] Debug(object[] args)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

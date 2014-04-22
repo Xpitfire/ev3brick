@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Threading;
 using MonoBrickFirmware.Display;
-using PrgSps2Gr1.States;
-using PrgSps2Gr1.States.Init;
+using PrgSps2Gr1.State;
+using PrgSps2Gr1.State.Init;
 
 namespace PrgSps2Gr1
 {
     class ProgramEv3Sps2Gr1
     {
         private readonly object _sync = new object();
-        private State _curState;
+        private AState _curAState;
 
         public static bool IsAlive { get; private set; }
 
@@ -19,17 +19,17 @@ namespace PrgSps2Gr1
         private ProgramEv3Sps2Gr1()
         {
             IsAlive = true;
-            _curState = new InitImpl(this);
+            _curAState = new InitImpl(this);
         }
 
 		/// <summary>
-		/// Gets or sets the controller state.
+		/// Gets or sets the controller AState.
 		/// </summary>
-		/// <value>Controller state.</value>
-        public State ProgramState
+		/// <value>Controller AState.</value>
+        public AState ProgramAState
         {
-            get { lock(_sync) return _curState; }
-            set { lock(_sync) _curState = value; }
+            get { lock(_sync) return _curAState; }
+            set { lock(_sync) _curAState = value; }
         }
 
 		/// <summary>
@@ -51,7 +51,7 @@ namespace PrgSps2Gr1
             {
                 lock (_sync)
                 {
-                    ProgramState.Update();
+                    ProgramAState.Update();
                 }
                 Thread.Sleep(100);
             }
@@ -67,7 +67,7 @@ namespace PrgSps2Gr1
             try
             {
                 var prg = new ProgramEv3Sps2Gr1();
-                // start the robot state update thread
+                // start the robot AState update thread
                 var thread = new Thread(prg.Run);
                 thread.Start();
             }

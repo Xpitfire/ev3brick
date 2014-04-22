@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PrgSps2Gr1.States;
 
 namespace PrgSps2Gr1
 {
@@ -24,7 +19,6 @@ namespace PrgSps2Gr1
 		{
 			get {return CommandEventQueue; }
 		}
-
 
     }
 }

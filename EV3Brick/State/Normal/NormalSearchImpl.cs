@@ -1,8 +1,8 @@
 ﻿using System.Threading;
 
-namespace PrgSps2Gr1.States.Normal
+namespace PrgSps2Gr1.State.Normal
 {
-    class NormalSearchImpl : State
+    class NormalSearchImpl : AState
     {
         public const string Name = "NormalSearch";
 
@@ -19,6 +19,16 @@ namespace PrgSps2Gr1.States.Normal
         {
             // TODO implements search procedure...
             Ev3.StopAllMovements();
+        }
+
+        public override void Log()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override object[] Debug(object[] args)
+        {
+            throw new System.NotImplementedException();
         }
 
         public override string ToString()
