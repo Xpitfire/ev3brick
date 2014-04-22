@@ -4,24 +4,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PrgSps2Gr1.States;
 
 namespace PrgSps2Gr1
 {
     class EventQueue
     {
-        private static readonly Queue<Action> PrimaryEventQueue = new Queue<Action>();
-        private static readonly Queue<Action> SecondaryEventQueue = new Queue<Action>();
-        private static readonly object Sync = new object();
+        private static readonly Queue<string> StateEventQueue = new Queue<string>();
+		private static readonly Queue<Action> CommandEventQueue = new Queue<Action>();
 
-        public static Queue<Action> Primary
+        internal static Queue<string> State
         {
-            get { lock(Sync) return PrimaryEventQueue; }
+            get { return StateEventQueue; }
         }
 
-        public static Queue<Action> Secondary
-        {
-            get { lock (Sync) return SecondaryEventQueue; }
-        }
+        internal static string LastState { get; set; }
+
+        internal static Queue<Action> Command
+		{
+			get {return CommandEventQueue; }
+		}
+
 
     }
 }

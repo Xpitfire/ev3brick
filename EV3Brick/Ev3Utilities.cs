@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using MonoBrickFirmware.Display;
 using MonoBrickFirmware.Movement;
 using MonoBrickFirmware.Sensors;
@@ -6,7 +7,7 @@ using MonoBrickFirmware.Sensors;
 namespace PrgSps2Gr1
 {
     class Ev3Utilities
-    {  
+    {
         private const float MinObjectDistanceDelta = 100F;
         private const int SpinningSpeed = 10;
         private readonly Vehicle _vehicle;
@@ -22,6 +23,7 @@ namespace PrgSps2Gr1
         private const int MaxSpin = 35;
         private const int SpinStep = 5;
 
+        public Color SavedColor { get; set; }
 
         public enum Speed 
         {
@@ -31,11 +33,18 @@ namespace PrgSps2Gr1
             Turbo = 100
         }
 
-        public Color SavedColor { get; set; }
-
+        public enum TurnDirection
+        {
+            Left, Right
+        }
+        
         public Ev3Utilities()
         {
-			// init motors
+            // start the general sensor monitoring thread
+            var thread = new Thread(SensorMonitorWorkThread);
+            thread.Start();
+
+            // init motors
             _motorSensorSpinner = new Motor(MotorPort.OutB);
             _vehicle = new Vehicle(MotorPort.OutA, MotorPort.OutD);
 
@@ -56,6 +65,17 @@ namespace PrgSps2Gr1
 			_spinClockwise = true;
         }
 
+        // ----- declare events -----
+        public event Action ReachedEdgeEvent;
+
+        protected virtual void OnReachedEdgeEvent()
+        {
+            var handler = ReachedEdgeEvent;
+            if (handler != null) handler();
+        }
+
+        // ----- ev3 utility method usage -----
+
 		/// <summary>
 		/// Drive straight with the given speed.
 		/// </summary>
@@ -72,11 +92,6 @@ namespace PrgSps2Gr1
             {
                 _vehicle.Forward(speed);
             }
-        }
-
-        public enum TurnDirection
-        {
-            Left, Right
         }
 
         public void VehicleReverse(TurnDirection turn, sbyte speed, sbyte turnPercent)
@@ -111,15 +126,9 @@ namespace PrgSps2Gr1
         {
             _vehicle.Off();
         }
-			
-        public bool ReachedEdge()
-        {
-            return _touchSensor.IsPressed();
-        }
 
         public void SpinScanner(bool active)
         {
-            
             if (!active) return;
 
             if (_spinDegree >= MaxSpin)
@@ -159,7 +168,7 @@ namespace PrgSps2Gr1
         }
 
 		/// <summary>
-		/// Writes the line to the EV3 Screen.
+		/// Writes a string line to the EV3 Screen.
 		/// </summary>
 		/// <param name="s">S.</param>
         public void WriteLine(string s)
@@ -174,6 +183,30 @@ namespace PrgSps2Gr1
         public Color ScanColor()
         {
             return _colorSensor.ReadColor();
+        }
+
+        // ----- special event update thread for state behavior -----
+
+        /// <summary>
+        /// Update thread to wrap the polling of sensor behaviors to a event base 
+        /// system.
+        /// </summary>
+        public void SensorMonitorWorkThread()
+        {
+            var changed = true;
+            while (ProgramEv3Sps2Gr1.IsAlive)
+            {
+				if (changed && (_touchSensor != null) && _touchSensor.IsPressed())
+                {
+                    OnReachedEdgeEvent();
+                    changed = false;
+                }
+                else if (!changed && !_touchSensor.IsPressed())
+                {
+                    changed = true;
+                }
+                Thread.Sleep(100);
+            }
         }
 
     }

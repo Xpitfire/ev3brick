@@ -1,28 +1,30 @@
 ﻿using System;
+using System.Threading;
+using PrgSps2Gr1.States.Normal;
 
-namespace PrgSps2Gr1
+namespace PrgSps2Gr1.States.Error
 {
     class ErrorEdgeImpl : State
     {
-        private readonly int _timeout = Environment.TickCount + 2000;
-        
-        private bool Timeout()
+        public const string Name = "ErrorEdge";
+
+        internal ErrorEdgeImpl()
         {
-            return Environment.TickCount > _timeout;
+            new Thread(() =>
+            {
+                Thread.Sleep(1000);
+                EventQueue.State.Enqueue(NormalDriveImpl.Name);
+            }).Start();
         }
 
         protected override void PerformAction()
         {
             Ev3.VehicleReverse(Ev3Utilities.TurnDirection.Left, 25, 90);
-            
-            if (Timeout()) {
-                SetState(new NormalDriveImpl());
-            }
         }
 
         public override String ToString()
         {
-            return "ErrorEdge";
+            return Name;
         }
     }
 }

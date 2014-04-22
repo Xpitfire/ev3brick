@@ -1,19 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace PrgSps2Gr1
+namespace PrgSps2Gr1.States.Master
 {
-    class ExitProgramImpl : State
+    class MasterExitImpl : State
     {
+        public const string Name = "MasterExit";
+
         protected override void PerformAction()
         {
             Ev3.WriteLine("Stopping motors");
             Ev3.StopAllMovements();
             Ev3.WriteLine("Exiting application...");
             base.Controller.Exit();
+        }
+
+        public override String ToString()
+        {
+            return Name;
         }
     }
 }

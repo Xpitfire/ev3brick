@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading;
 using MonoBrickFirmware.Display;
+using PrgSps2Gr1.States;
+using PrgSps2Gr1.States.Init;
 
 namespace PrgSps2Gr1
 {
@@ -8,38 +10,35 @@ namespace PrgSps2Gr1
     {
         private readonly object _sync = new object();
         private State _curState;
-        private Boolean _isAlive;
 
-        public bool IsAlive 
-        {
-            get { return _isAlive; }
-        }
+        public static bool IsAlive { get; private set; }
 
-		/// <summary>
+        /// <summary>
 		/// Initializes the robot instance. <See cref="PrgSps2Gr1.ProgramEv3Sps2Gr1"/> class.
 		/// </summary>
         private ProgramEv3Sps2Gr1()
         {
-            _isAlive = true;
-            _curState = new InitStartupImpl(this);
+            IsAlive = true;
+            _curState = new InitImpl(this);
         }
 
 		/// <summary>
 		/// Gets or sets the controller state.
 		/// </summary>
 		/// <value>Controller state.</value>
-        public State ControllerState
+        public State ProgramState
         {
             get { lock(_sync) return _curState; }
             set { lock(_sync) _curState = value; }
         }
 
 		/// <summary>
-		/// Stop the execution of the robot.
+		/// Stop the execution of the program.
 		/// </summary>
         public void Exit()
         {
-            _isAlive = false;
+            IsAlive = false;
+			Thread.Sleep(5000);
             Environment.Exit(0);
         }
 
@@ -48,13 +47,13 @@ namespace PrgSps2Gr1
 		/// </summary>
         public void Run()
         {
-            while (_isAlive)
+            while (IsAlive)
             {
                 lock (_sync)
                 {
-                    ControllerState.Update();
+                    ProgramState.Update();
                 }
-                Thread.Sleep(50);
+                Thread.Sleep(100);
             }
         }
 
@@ -68,12 +67,14 @@ namespace PrgSps2Gr1
             try
             {
                 var prg = new ProgramEv3Sps2Gr1();
-                prg.Run();
+                // start the robot state update thread
+                var thread = new Thread(prg.Run);
+                thread.Start();
             }
             catch (Exception ex)
             {
                 LcdConsole.WriteLine("Exception occured!" + ex.Message); 
-                Thread.Sleep(10000); 
+                Thread.Sleep(5000); 
             }
         }
 
