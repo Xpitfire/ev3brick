@@ -12,10 +12,17 @@ namespace PrgSps2Gr1.State
     {
         private static IEv3Control _ev3;
         private static ProgramEv3Sps2Gr1 _controller;
-        
-        protected static IEv3Control Ev3
+        private static bool _debug;
+
+        protected IEv3Control Ev3
         {
-            get { return _ev3 ?? ( _ev3 = new Ev3ControlImpl()); }
+            get 
+            {
+                if (_debug) 
+                    return _ev3 ?? (_ev3 = Ev3SimControlImpl.GetInstance());
+                else 
+                    return _ev3 ?? ( _ev3 = new Ev3ControlImpl()); 
+            }
         }
 
         /// <summary>
@@ -38,11 +45,14 @@ namespace PrgSps2Gr1.State
             set { throw new System.NotImplementedException(); }
         }
 
+        protected AState() : this(false) { }
+
         /// <summary>
         /// AState constructor to inistialize the base class instances.
         /// </summary>
-        protected AState()
+        protected AState(bool debug)
         {
+            _debug = debug;
             // add anonymous method action to event queue
             Ev3.EscapeReleasedButtonEvent += () => EventQueue.State.Enqueue(MasterExitImpl.Name);
             Ev3.EnterReleasedButtonEvent += handlePauseAndResume;

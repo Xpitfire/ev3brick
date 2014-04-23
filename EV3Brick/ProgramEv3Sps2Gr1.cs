@@ -7,27 +7,27 @@ using PrgSps2Gr1.State.Init;
 
 namespace PrgSps2Gr1
 {
-    class ProgramEv3Sps2Gr1
+    public class ProgramEv3Sps2Gr1
     {
         private readonly object _sync = new object();
         private AState _curAState;
 
-        public static bool IsAlive { get; private set; }
+        public static bool IsAlive { get; set; }
 
         /// <summary>
 		/// Initializes the robot instance. <See cref="PrgSps2Gr1.ProgramEv3Sps2Gr1"/> class.
 		/// </summary>
-        private ProgramEv3Sps2Gr1()
+        public ProgramEv3Sps2Gr1(bool debug)
         {
             IsAlive = true;
-            _curAState = new InitImpl(this);
+            _curAState = new InitImpl(this, debug);
         }
 
 		/// <summary>
 		/// Gets or sets the controller AState.
 		/// </summary>
 		/// <value>Controller AState.</value>
-        public AState ProgramAState
+        internal AState ProgramAState
         {
             get { lock(_sync) return _curAState; }
             set { lock(_sync) _curAState = value; }
@@ -63,14 +63,13 @@ namespace PrgSps2Gr1
 		/// <summary>
 		/// The entry point of the program.
 		/// </summary>
+        [STAThread]
         public static void Main()
         {
             try
             {
-                var prg = new ProgramEv3Sps2Gr1();
                 // start the robot AState update thread
-                var thread = new Thread(prg.Run);
-                thread.Start();
+                new ProgramEv3Sps2Gr1(false).Run();
             }
             catch (Exception ex)
             {

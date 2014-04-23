@@ -19,7 +19,7 @@ namespace PrgSps2Gr1.State.Normal
 
         protected override void PerformAction()
         {
-            Ev3.VehicleDrive((sbyte) EV3Constants.Speed.Slow);
+            Ev3.VehicleDrive((sbyte) Ev3Constants.Speed.Slow);
         }
 
         public override void Log()

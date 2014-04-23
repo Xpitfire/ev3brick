@@ -40,20 +40,10 @@
       <HintPath>lib\MonoBrickFirmware.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Control\EV3Constants.cs" />
-    <Compile Include="Control\SimControlGui.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Control\SimControlGui.Designer.cs">
-      <DependentUpon>SimControlGui.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Control\SimulationEv3ControlImpl.cs" />
+    <Compile Include="Control\Ev3Constants.cs" />
+    <Compile Include="Control\Ev3SimControlImpl.cs" />
     <Compile Include="Debug\IEv3Debug.cs" />
     <Compile Include="Control\IEv3Control.cs" />
     <Compile Include="State\Error\ErrorEdgeImpl.cs" />
@@ -70,11 +60,6 @@
     <Compile Include="State\Normal\NormalDriveImpl.cs" />
     <Compile Include="State\AState.cs" />
     <Compile Include="Utility\Timer.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Control\SimControlGui.resx">
-      <DependentUpon>SimControlGui.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

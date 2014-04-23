@@ -20,7 +20,7 @@ namespace PrgSps2Gr1.State.Error
 
         protected override void PerformAction()
         {
-            Ev3.VehicleReverse(EV3Constants.TurnDirection.Left, 25, 90);
+            Ev3.VehicleReverse(Ev3Constants.TurnDirection.Left, 25, 90);
         }
 
         public override void Log()

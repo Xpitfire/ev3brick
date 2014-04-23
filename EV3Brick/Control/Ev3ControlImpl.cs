@@ -38,7 +38,6 @@ namespace PrgSps2Gr1.Control
             // start the general sensor monitoring thread
             var thread = new Thread(SensorMonitorWorkThread);
             thread.Start();
-
             // init ev3 button events
             _buttonEvents = new ButtonEvents();
             _buttonEvents.EscapeReleased += EscapeReleasedButtonEvent;
@@ -93,9 +92,9 @@ namespace PrgSps2Gr1.Control
             }
         }
 
-        public void VehicleReverse(EV3Constants.TurnDirection turn, sbyte speed, sbyte turnPercent)
+        public void VehicleReverse(Ev3Constants.TurnDirection turn, sbyte speed, sbyte turnPercent)
         {
-            if (turn == EV3Constants.TurnDirection.Left)
+            if (turn == Ev3Constants.TurnDirection.Left)
             {
                 _vehicle.ReverseLeft = true;
                 _vehicle.ReverseRight = false;

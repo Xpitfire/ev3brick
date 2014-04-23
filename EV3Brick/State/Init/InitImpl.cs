@@ -8,7 +8,7 @@ namespace PrgSps2Gr1.State.Init
     {
         public const string Name = "Init";
 
-        internal InitImpl(ProgramEv3Sps2Gr1 project)
+        internal InitImpl(ProgramEv3Sps2Gr1 project, bool debug) : base(debug)
         {
             Controller = project;
             new Thread(() => 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PrgSps2Gr1.Debug
 {
-    interface IEv3Debug
+    public interface IEv3Debug
     {
         void Log();
 
