@@ -6,49 +6,59 @@ using System.Threading.Tasks;
 
 namespace PrgSps2Gr1.Control
 {
-    class SimulationControlImpl : IControl
+    class SimulationEv3ControlImpl : IEv3Control
     {
         public event Action EscapeReleasedButtonEvent;
         public event Action EnterReleasedButtonEvent;
         public event Action ReachedEdgeEvent;
+        
+        private int _spinScannerCnt;
+
+        public SimulationEv3ControlImpl()
+        {
+            new SimControlGui();
+        }
+
         public void SpinScanner(bool active)
         {
-            throw new NotImplementedException();
+            _spinScannerCnt++;
+            //txtBoxSpinScanner.Text = _spinScannerCnt.ToString();
         }
 
         public void StopAllMovements()
         {
-            throw new NotImplementedException();
+            // TODO implement
         }
 
         public void VehicleDrive(sbyte speed)
         {
-            throw new NotImplementedException();
+            // TODO implement
         }
 
         public void VehicleStop()
         {
-            throw new NotImplementedException();
+            // TODO implement
         }
 
-        public void VehicleReverse(Ev3ControlImpl.TurnDirection turn, sbyte speed, sbyte turnPercent)
+        public void VehicleReverse(EV3Constants.TurnDirection turn, sbyte speed, sbyte turnPercent)
         {
-            throw new NotImplementedException();
+            // TODO implement
         }
 
         public void WriteLine(string s)
         {
-            throw new NotImplementedException();
+            //txtBoxDisplayLog.Text = s;
         }
 
         public void Log()
         {
-            throw new NotImplementedException();
+            // TODO implement
         }
 
         public object[] Debug(object[] args)
         {
             throw new NotImplementedException();
         }
+
     }
 }

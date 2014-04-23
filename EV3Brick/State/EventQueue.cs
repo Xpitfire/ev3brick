@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
-namespace PrgSps2Gr1
+namespace PrgSps2Gr1.State
 {
     class EventQueue
     {

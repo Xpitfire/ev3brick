@@ -8,14 +8,14 @@ using PrgSps2Gr1.State.Normal;
 
 namespace PrgSps2Gr1.State
 {
-    abstract class AState : IDebug
+    abstract class AState : IEv3Debug
     {
-        private static Ev3ControlImpl _ev3;
+        private static IEv3Control _ev3;
         private static ProgramEv3Sps2Gr1 _controller;
         
-        protected Ev3ControlImpl Ev3
+        protected static IEv3Control Ev3
         {
-            get { return _ev3 ?? (_ev3 = new Ev3ControlImpl()); }
+            get { return _ev3 ?? ( _ev3 = new Ev3ControlImpl()); }
         }
 
         /// <summary>

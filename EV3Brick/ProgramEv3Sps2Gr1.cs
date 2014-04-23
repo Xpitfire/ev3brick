@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using MonoBrickFirmware.Display;
+using PrgSps2Gr1.Control;
 using PrgSps2Gr1.State;
 using PrgSps2Gr1.State.Init;
 

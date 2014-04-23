@@ -7,7 +7,7 @@ using MonoBrickFirmware.UserInput;
 
 namespace PrgSps2Gr1.Control
 {
-    class Ev3ControlImpl : IControl
+    public class Ev3ControlImpl : IEv3Control
     {
         private readonly ButtonEvents _buttonEvents;
         private const float MinObjectDistanceDelta = 100F;
@@ -26,19 +26,6 @@ namespace PrgSps2Gr1.Control
         private const int SpinStep = 5;
 
         public Color SavedColor { get; set; }
-
-        public enum Speed 
-        {
-            Slow = 10, 
-            Medium = 50, 
-            Fast = 70, 
-            Turbo = 100
-        }
-
-        public enum TurnDirection
-        {
-            Left, Right
-        }
 
         // ----- class events -----
 
@@ -106,9 +93,9 @@ namespace PrgSps2Gr1.Control
             }
         }
 
-        public void VehicleReverse(TurnDirection turn, sbyte speed, sbyte turnPercent)
+        public void VehicleReverse(EV3Constants.TurnDirection turn, sbyte speed, sbyte turnPercent)
         {
-            if (turn == TurnDirection.Left)
+            if (turn == EV3Constants.TurnDirection.Left)
             {
                 _vehicle.ReverseLeft = true;
                 _vehicle.ReverseRight = false;
