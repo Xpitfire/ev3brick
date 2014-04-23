@@ -1,0 +1,15 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench>
+    <Files>
+      <File FileName="EV3Brick\ProgramEv3Sps2Gr1.cs" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint enabled="false" file="D:\Projekte\GitHub\ev3brick\EV3Brick\Control\SimControlImpl.cs" line="22" column="1" />
+      <Breakpoint file="D:\Projekte\GitHub\ev3brick\EV3Brick\ProgramEv3Sps2Gr1.cs" line="51" column="1" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
