@@ -8,24 +8,19 @@ namespace PrgSps2Gr1.State.Init
     {
         public const string Name = "Init";
 
-        internal InitImpl(ProgramEv3Sps2Gr1 project, bool debug) : base(debug)
+        internal InitImpl(ProgramEv3Sps2Gr1 project)
         {
             Controller = project;
             new Thread(() => 
             {
                 Thread.Sleep(1000);
-                EventQueue.State.Enqueue(NormalDriveImpl.Name);
+                EventQueue.EnqueueState(NormalDriveImpl.Name);
             }).Start();
         }
 
         protected override void PerformAction()
         {
             // initialize components
-        }
-
-        public override void Log()
-        {
-            throw new NotImplementedException();
         }
 
         public override object[] Debug(object[] args)

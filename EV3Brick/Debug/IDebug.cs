@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace PrgSps2Gr1.Debug
 {
-    public interface IEv3Debug
+    public interface IDebug
     {
-        void Log();
-
         object[] Debug(object[] args);
     }
 }

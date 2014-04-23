@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace PrgSps2Gr1.Control
+namespace PrgSps2Gr1.Control.Impl
 {
-    public class Ev3SimControlImpl : IEv3Control
+    public class DeviceEv3SimControlImpl : IDeviceControl
     {
         private static readonly object Sync = new object();
 
-        private static Ev3SimControlImpl _instance;
+        private static DeviceEv3SimControlImpl _instance;
 
         public event Action EscapeReleasedButtonEvent;
         public event Action EnterReleasedButtonEvent;
@@ -26,16 +22,16 @@ namespace PrgSps2Gr1.Control
             } 
         }
 
-        private Ev3SimControlImpl()
+        private DeviceEv3SimControlImpl()
         {
             _instance = this;
         }
 
-        public static Ev3SimControlImpl GetInstance()
+        public static DeviceEv3SimControlImpl GetInstance()
         {
             if (_instance == null)
             {
-                _instance = new Ev3SimControlImpl();
+                _instance = new DeviceEv3SimControlImpl();
             }
             return _instance;
         }
@@ -76,7 +72,7 @@ namespace PrgSps2Gr1.Control
             // TODO implement
         }
 
-        public void VehicleReverse(Ev3Constants.TurnDirection turn, sbyte speed, sbyte turnPercent)
+        public void VehicleReverse(DeviceConstants.TurnDirection turn, sbyte speed, sbyte turnPercent)
         {
             // TODO implement
         }
@@ -87,11 +83,6 @@ namespace PrgSps2Gr1.Control
             {
                 _consoleText += "\n" + s;
             }
-        }
-
-        public void Log()
-        {
-            // TODO implement
         }
 
         public object[] Debug(object[] args)

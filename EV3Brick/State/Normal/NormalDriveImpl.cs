@@ -13,18 +13,13 @@ namespace PrgSps2Gr1.State.Normal
             new Thread(() =>
             {
                 Thread.Sleep(5000);
-                EventQueue.State.Enqueue(NormalSearchImpl.Name);
+                EventQueue.EnqueueState(NormalSearchImpl.Name);
             }).Start();
         }
 
         protected override void PerformAction()
         {
-            Ev3.VehicleDrive((sbyte) Ev3Constants.Speed.Slow);
-        }
-
-        public override void Log()
-        {
-            throw new NotImplementedException();
+            Ev3.VehicleDrive((sbyte) DeviceConstants.Speed.Slow);
         }
 
         public override object[] Debug(object[] args)

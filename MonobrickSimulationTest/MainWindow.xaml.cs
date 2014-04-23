@@ -1,22 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 using PrgSps2Gr1;
-using PrgSps2Gr1.Control;
+using PrgSps2Gr1.Control.Impl;
 
 namespace MonobrickSimulationTest
 {
@@ -35,10 +24,11 @@ namespace MonobrickSimulationTest
         private void CreateMonobrickInstance()
         {
             new Thread(() =>
-            {
-                var prg = new ProgramEv3Sps2Gr1(true);
-                prg.Run();
-            }).Start();
+                {
+                    ProgramEv3Sps2Gr1.IsDebug = true;
+                    var prg = new ProgramEv3Sps2Gr1();
+                    prg.Run();
+                }).Start();
         }
 
         public void UpdateView()
@@ -48,7 +38,8 @@ namespace MonobrickSimulationTest
                 if (!Dispatcher.CheckAccess())
                 {
                     Dispatcher.Invoke(
-                            () => TextBlockEv3Console.Text = Ev3SimControlImpl.GetInstance().Ev3ConsoleText, DispatcherPriority.Normal);
+                            () => TextBlockEv3Console.Text = DeviceEv3SimControlImpl.GetInstance().Ev3ConsoleText, DispatcherPriority.Normal);
+                    
                 }
                 else
                 {
@@ -67,18 +58,19 @@ namespace MonobrickSimulationTest
 
         private void ButtonExit_Click(object sender, RoutedEventArgs e)
         {
-            Ev3SimControlImpl.GetInstance().OnEscapeReleasedButtonEvent(null, null);
+            DeviceEv3SimControlImpl.GetInstance().OnEscapeReleasedButtonEvent(null, null);
         }
 
         private void ButtonEnter_Click(object sender, RoutedEventArgs e)
         {
-            Ev3SimControlImpl.GetInstance().OnEnterReleasedButtonEvent(null, null);
+            DeviceEv3SimControlImpl.GetInstance().OnEnterReleasedButtonEvent(null, null);
         }
 
         private void ButtonReachedEdgeEvent_Click(object sender, RoutedEventArgs e)
         {
-            Ev3SimControlImpl.GetInstance().OnReachedEdgeEvent(null, null);
+            DeviceEv3SimControlImpl.GetInstance().OnReachedEdgeEvent(null, null);
         }
-                        
+          
     }
+
 }

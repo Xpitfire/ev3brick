@@ -9,11 +9,6 @@
             // TODO implement search adjustment
         }
 
-        public override void Log()
-        {
-            throw new System.NotImplementedException();
-        }
-
         public override object[] Debug(object[] args)
         {
             throw new System.NotImplementedException();

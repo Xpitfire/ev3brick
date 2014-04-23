@@ -3,7 +3,7 @@ using PrgSps2Gr1.Debug;
 
 namespace PrgSps2Gr1.Control
 {
-    public interface IEv3Control : IEv3Debug
+    public interface IDeviceControl : IDebug
     {
         event Action EscapeReleasedButtonEvent;
 
@@ -19,7 +19,7 @@ namespace PrgSps2Gr1.Control
 
         void VehicleStop();
 
-        void VehicleReverse(Ev3Constants.TurnDirection turn, sbyte speed, sbyte turnPercent);
+        void VehicleReverse(DeviceConstants.TurnDirection turn, sbyte speed, sbyte turnPercent);
 
         void WriteLine(string s);
     }

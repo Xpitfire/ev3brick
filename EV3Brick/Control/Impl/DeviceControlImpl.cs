@@ -5,9 +5,9 @@ using MonoBrickFirmware.Movement;
 using MonoBrickFirmware.Sensors;
 using MonoBrickFirmware.UserInput;
 
-namespace PrgSps2Gr1.Control
+namespace PrgSps2Gr1.Control.Impl
 {
-    public class Ev3ControlImpl : IEv3Control
+    public class DeviceControlImpl : IDeviceControl
     {
         private readonly ButtonEvents _buttonEvents;
         private const float MinObjectDistanceDelta = 100F;
@@ -33,7 +33,7 @@ namespace PrgSps2Gr1.Control
         public event Action EnterReleasedButtonEvent;
         public event Action ReachedEdgeEvent;
         
-        public Ev3ControlImpl()
+        public DeviceControlImpl()
         {
             // start the general sensor monitoring thread
             var thread = new Thread(SensorMonitorWorkThread);
@@ -92,9 +92,9 @@ namespace PrgSps2Gr1.Control
             }
         }
 
-        public void VehicleReverse(Ev3Constants.TurnDirection turn, sbyte speed, sbyte turnPercent)
+        public void VehicleReverse(DeviceConstants.TurnDirection turn, sbyte speed, sbyte turnPercent)
         {
-            if (turn == Ev3Constants.TurnDirection.Left)
+            if (turn == DeviceConstants.TurnDirection.Left)
             {
                 _vehicle.ReverseLeft = true;
                 _vehicle.ReverseRight = false;
@@ -205,11 +205,6 @@ namespace PrgSps2Gr1.Control
                 }
                 Thread.Sleep(100);
             }
-        }
-
-        public void Log()
-        {
-            throw new NotImplementedException();
         }
 
         public object[] Debug(object[] args)

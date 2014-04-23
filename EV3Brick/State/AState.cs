@@ -2,27 +2,20 @@
 using System.Threading;
 using PrgSps2Gr1.Control;
 using PrgSps2Gr1.Debug;
+using PrgSps2Gr1.Logging;
 using PrgSps2Gr1.State.Error;
 using PrgSps2Gr1.State.Master;
 using PrgSps2Gr1.State.Normal;
 
 namespace PrgSps2Gr1.State
 {
-    abstract class AState : IEv3Debug
+    abstract class AState : IDebug
     {
-        private static IEv3Control _ev3;
         private static ProgramEv3Sps2Gr1 _controller;
-        private static bool _debug;
 
-        protected IEv3Control Ev3
+        protected IDeviceControl Ev3
         {
-            get 
-            {
-                if (_debug) 
-                    return _ev3 ?? (_ev3 = Ev3SimControlImpl.GetInstance());
-                else 
-                    return _ev3 ?? ( _ev3 = new Ev3ControlImpl()); 
-            }
+            get { return DeviceControlFactory.Ev3Control; }
         }
 
         /// <summary>
@@ -33,7 +26,7 @@ namespace PrgSps2Gr1.State
             set
             {
                 if (value == null) throw new InvalidDataException("Controller == null!");
-                Ev3.WriteLine("Set new controller!");
+                Logger.Log("Set State controller");
                 _controller = value;
             }
             get { return _controller; }
@@ -45,18 +38,15 @@ namespace PrgSps2Gr1.State
             set { throw new System.NotImplementedException(); }
         }
 
-        protected AState() : this(false) { }
-
         /// <summary>
         /// AState constructor to inistialize the base class instances.
         /// </summary>
-        protected AState(bool debug)
+        protected AState()
         {
-            _debug = debug;
             // add anonymous method action to event queue
-            Ev3.EscapeReleasedButtonEvent += () => EventQueue.State.Enqueue(MasterExitImpl.Name);
+            Ev3.EscapeReleasedButtonEvent += () => EventQueue.EnqueueState(MasterExitImpl.Name);
             Ev3.EnterReleasedButtonEvent += handlePauseAndResume;
-            Ev3.ReachedEdgeEvent += () => EventQueue.State.Enqueue(ErrorEdgeImpl.Name);
+            Ev3.ReachedEdgeEvent += () => EventQueue.EnqueueState(ErrorEdgeImpl.Name);
         }
 
         /// <summary>
@@ -66,11 +56,11 @@ namespace PrgSps2Gr1.State
         {
             if ((_controller != null) && !(_controller.ProgramAState is MasterPauseImpl))
             {
-                EventQueue.State.Enqueue(MasterPauseImpl.Name);
+                EventQueue.EnqueueState(MasterPauseImpl.Name);
             }
             else if (EventQueue.LastState != null)
             {
-                EventQueue.State.Enqueue(EventQueue.LastState);
+                EventQueue.EnqueueState(EventQueue.LastState);
             }
         }
 
@@ -78,8 +68,6 @@ namespace PrgSps2Gr1.State
         /// Mothod to override from the implementing sub-classes.
         /// </summary>
         protected abstract void PerformAction();
-
-        public abstract void Log();
 
         public abstract object[] Debug(object[] args);
 
@@ -90,7 +78,7 @@ namespace PrgSps2Gr1.State
         private void SetState(AState newAState)
         {
             if (Equals(newAState)) return;
-			Ev3.WriteLine("StateChanged: " + newAState);
+			Logger.Log("StateChanged: " + newAState);
             EventQueue.LastState = _controller.ProgramAState.ToString();
             _controller.ProgramAState = newAState;
         }
@@ -101,11 +89,11 @@ namespace PrgSps2Gr1.State
         public void Update()
         {
 			// dequeue events from a primary event queue until it's empty and then check the secondary and tertiary
-			while (EventQueue.State.Count <= 0) 
+			while (EventQueue.GetStateCount() <= 0) 
 			{
-                if (EventQueue.Command.Count > 0)
+                if (EventQueue.GetCommandCount() > 0)
                 {
-                    EventQueue.Command.Dequeue()();
+                    EventQueue.DequeueCommand()();
                 }
                 Thread.Sleep(100);
                 // perform sub-class default action
@@ -113,7 +101,7 @@ namespace PrgSps2Gr1.State
 			}
 
             // set the next AState by converting the AState name queue entry
-            var stateName = EventQueue.State.Dequeue();
+            var stateName = EventQueue.DequeueState();
             AState aState = null;
             switch (stateName)
             {

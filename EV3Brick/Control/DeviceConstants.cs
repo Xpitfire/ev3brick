@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PrgSps2Gr1.Control
 {
-    public class Ev3Constants
+    public class DeviceConstants
     {
         public enum Speed
         {

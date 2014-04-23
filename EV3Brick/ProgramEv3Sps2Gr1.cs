@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
-using MonoBrickFirmware.Display;
-using PrgSps2Gr1.Control;
+using PrgSps2Gr1.Logging;
 using PrgSps2Gr1.State;
 using PrgSps2Gr1.State.Init;
 
@@ -10,17 +9,24 @@ namespace PrgSps2Gr1
     public class ProgramEv3Sps2Gr1
     {
         private readonly object _sync = new object();
+        private static bool _isAlive = true;
         private AState _curAState;
 
-        public static bool IsAlive { get; set; }
+        public static bool IsAlive
+        {
+            get { return _isAlive; }
+            set { _isAlive = value; }
+        }
+
+        public static bool IsDebug { get; set; }
 
         /// <summary>
 		/// Initializes the robot instance. <See cref="PrgSps2Gr1.ProgramEv3Sps2Gr1"/> class.
 		/// </summary>
-        public ProgramEv3Sps2Gr1(bool debug)
+        public ProgramEv3Sps2Gr1()
         {
-            IsAlive = true;
-            _curAState = new InitImpl(this, debug);
+            Logger.Log("Creating new State instance --> initializing...");
+            _curAState = new InitImpl(this);
         }
 
 		/// <summary>
@@ -48,6 +54,7 @@ namespace PrgSps2Gr1
 		/// </summary>
         public void Run()
         {
+            Logger.Log("Starting program update thread --> Run...");
             while (IsAlive)
             {
                 lock (_sync)
@@ -63,17 +70,18 @@ namespace PrgSps2Gr1
 		/// <summary>
 		/// The entry point of the program.
 		/// </summary>
-        [STAThread]
         public static void Main()
         {
             try
             {
+                IsDebug = false;
+                Logger.Log("Debugging disabled.");
                 // start the robot AState update thread
-                new ProgramEv3Sps2Gr1(false).Run();
+                new ProgramEv3Sps2Gr1().Run();
             }
             catch (Exception ex)
             {
-                LcdConsole.WriteLine("Exception occured!" + ex.Message); 
+                Logger.Log("ERROR: Exception occured!" + ex.Message); 
                 Thread.Sleep(5000); 
             }
         }

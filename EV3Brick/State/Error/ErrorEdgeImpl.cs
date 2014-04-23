@@ -14,18 +14,13 @@ namespace PrgSps2Gr1.State.Error
             new Thread(() =>
             {
                 Thread.Sleep(1000);
-                EventQueue.State.Enqueue(NormalDriveImpl.Name);
+                EventQueue.EnqueueState(NormalDriveImpl.Name);
             }).Start();
         }
 
         protected override void PerformAction()
         {
-            Ev3.VehicleReverse(Ev3Constants.TurnDirection.Left, 25, 90);
-        }
-
-        public override void Log()
-        {
-            throw new NotImplementedException();
+            Ev3.VehicleReverse(DeviceConstants.TurnDirection.Left, 25, 90);
         }
 
         public override object[] Debug(object[] args)

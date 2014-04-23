@@ -1,4 +1,5 @@
 ﻿using System;
+using PrgSps2Gr1.Logging;
 
 namespace PrgSps2Gr1.State.Master
 {
@@ -8,15 +9,10 @@ namespace PrgSps2Gr1.State.Master
 
         protected override void PerformAction()
         {
-            Ev3.WriteLine("Stopping motors");
+            Logger.Log("Stopping motors");
             Ev3.StopAllMovements();
-            Ev3.WriteLine("Exiting application...");
+            Logger.Log("Exiting application...");
             base.Controller.Exit();
-        }
-
-        public override void Log()
-        {
-            throw new NotImplementedException();
         }
 
         public override object[] Debug(object[] args)

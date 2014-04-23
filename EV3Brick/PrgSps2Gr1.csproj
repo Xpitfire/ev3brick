@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PrgSps2Gr1</RootNamespace>
-    <AssemblyName>PrgSps2Gr1</AssemblyName>
+    <AssemblyName>inTeam_Cunt</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -42,10 +42,11 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Control\Ev3Constants.cs" />
-    <Compile Include="Control\Ev3SimControlImpl.cs" />
-    <Compile Include="Debug\IEv3Debug.cs" />
-    <Compile Include="Control\IEv3Control.cs" />
+    <Compile Include="Control\DeviceConstants.cs" />
+    <Compile Include="Control\DeviceControlFactory.cs" />
+    <Compile Include="Control\Impl\DeviceEv3SimControlImpl.cs" />
+    <Compile Include="Debug\IDebug.cs" />
+    <Compile Include="Control\IDeviceControl.cs" />
     <Compile Include="State\Error\ErrorEdgeImpl.cs" />
     <Compile Include="State\EventQueue.cs" />
     <Compile Include="State\Normal\NormalFoundImpl.cs" />
@@ -55,10 +56,11 @@
     <Compile Include="State\Normal\NormalIdentifyImpl.cs" />
     <Compile Include="State\Master\MasterPauseImpl.cs" />
     <Compile Include="ProgramEv3Sps2Gr1.cs" />
-    <Compile Include="Control\Ev3ControlImpl.cs" />
+    <Compile Include="Control\Impl\DeviceControlImpl.cs" />
     <Compile Include="State\Init\InitImpl.cs" />
     <Compile Include="State\Normal\NormalDriveImpl.cs" />
     <Compile Include="State\AState.cs" />
+    <Compile Include="Logging\Logger.cs" />
     <Compile Include="Utility\Timer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

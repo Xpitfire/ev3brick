@@ -1,4 +1,6 @@
-﻿namespace PrgSps2Gr1.State.Normal
+﻿using PrgSps2Gr1.Logging;
+
+namespace PrgSps2Gr1.State.Normal
 {
     class NormalIdentifyImpl : AState
     {
@@ -6,12 +8,7 @@
 
         protected override void PerformAction()
         {
-            Ev3.WriteLine("analyse object...");
-        }
-
-        public override void Log()
-        {
-            throw new System.NotImplementedException();
+            Logger.Log("analyse object...");
         }
 
         public override object[] Debug(object[] args)
