@@ -6,9 +6,15 @@ namespace PrgSps2Gr1.State.Normal
     {
         public const string Name = "NormalIdentify";
 
-        protected override void PerformAction()
+        protected override void PerformRecurrentAction()
         {
-            Logger.Log("analyse object...");
+            // TODO implement identify
+        }
+
+        protected override void PerformSingleAction()
+        {
+            // TODO implement action
+            Logger.Log("Analyse object not implemented!");
         }
 
         public override object[] Debug(object[] args)
@@ -20,5 +26,6 @@ namespace PrgSps2Gr1.State.Normal
         {
             return Name;
         }
+
     }
 }

@@ -1,13 +1,32 @@
-﻿namespace PrgSps2Gr1.State.Master
+﻿using PrgSps2Gr1.Logging;
+
+namespace PrgSps2Gr1.State.Master
 {
     class MasterPauseImpl : AState
     {
         public const string Name = "MasterPause";
+        private static bool _inPause = false;
 
-        protected override void PerformAction()
+        protected override void PerformRecurrentAction()
         {
-            // do nothing
+            // nothing must be called
+        }
+
+        protected override void PerformSingleAction()
+        {
             Ev3.StopAllMovements();
+
+            // Handles how to interpret pause state interactions and goes to a dedicated
+            // state (Pause or Resume previous state).
+            if (_inPause == false)
+            {
+                _inPause = true;
+            }
+            else
+            {
+                _inPause = false;
+                EventQueue.EnqueueState(EventQueue.LastState);
+            }
         }
 
         public override object[] Debug(object[] args)
@@ -19,5 +38,6 @@
         {
             return Name;
         }
+
     }
 }

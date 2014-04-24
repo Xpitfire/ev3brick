@@ -2,6 +2,7 @@
 using System.Threading;
 using PrgSps2Gr1.Control;
 using PrgSps2Gr1.State.Normal;
+using Timer = PrgSps2Gr1.Utility.Timer;
 
 namespace PrgSps2Gr1.State.Error
 {
@@ -11,14 +12,18 @@ namespace PrgSps2Gr1.State.Error
 
         internal ErrorEdgeImpl()
         {
-            new Thread(() =>
-            {
-                Thread.Sleep(1000);
-                EventQueue.EnqueueState(NormalDriveImpl.Name);
-            }).Start();
+            Timer.TickTimeout = Timer.TickTime.Medium;
         }
 
-        protected override void PerformAction()
+        protected override void PerformRecurrentAction()
+        {
+            if (Timer.IsTimeout())
+            {
+                EventQueue.EnqueueState(NormalSearchImpl.Name);
+            }
+        }
+
+        protected override void PerformSingleAction()
         {
             Ev3.VehicleReverse(DeviceConstants.TurnDirection.Left, 25, 90);
         }

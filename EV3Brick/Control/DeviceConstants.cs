@@ -20,6 +20,6 @@ namespace PrgSps2Gr1.Control
         {
             Left, Right
         }
-
+        
     }
 }

@@ -3,6 +3,7 @@ using System.Threading;
 using PrgSps2Gr1.Logging;
 using PrgSps2Gr1.State;
 using PrgSps2Gr1.State.Init;
+using Timer = PrgSps2Gr1.Utility.Timer;
 
 namespace PrgSps2Gr1
 {
@@ -12,6 +13,8 @@ namespace PrgSps2Gr1
         private static bool _isAlive = true;
         private AState _curAState;
 
+        #region Global Condition Properties
+
         public static bool IsAlive
         {
             get { return _isAlive; }
@@ -19,6 +22,8 @@ namespace PrgSps2Gr1
         }
 
         public static bool IsDebug { get; set; }
+
+        #endregion
 
         /// <summary>
 		/// Initializes the robot instance. <See cref="PrgSps2Gr1.ProgramEv3Sps2Gr1"/> class.
@@ -28,29 +33,22 @@ namespace PrgSps2Gr1
             Logger.Log("Creating new State instance --> initializing...");
             _curAState = new InitImpl(this);
         }
+        
+        #region Sate Controller
 
-		/// <summary>
-		/// Gets or sets the controller AState.
-		/// </summary>
-		/// <value>Controller AState.</value>
+        /// <summary>
+        /// Gets or sets thread save the controller state, which is used for the
+        /// current update sequence.
+        /// </summary>
+        /// <value>Controller AState.</value>
         internal AState ProgramAState
         {
-            get { lock(_sync) return _curAState; }
-            set { lock(_sync) _curAState = value; }
+            get { lock (_sync) return _curAState; }
+            set { lock (_sync) _curAState = value; }
         }
 
 		/// <summary>
-		/// Stop the execution of the program.
-		/// </summary>
-        public void Exit()
-        {
-            IsAlive = false;
-			Thread.Sleep(5000);
-            Environment.Exit(0);
-        }
-
-		/// <summary>
-		/// Run the EV3 robot.
+		/// Update the EV3 robot.
 		/// </summary>
         public void Run()
         {
@@ -61,11 +59,25 @@ namespace PrgSps2Gr1
                 {
                     ProgramAState.Update();
                 }
-                Thread.Sleep(100);
+                Thread.Sleep(Timer.TickTime.ExtraShort);
             }
         }
 
+        #endregion
+
         // ------------------------------ static methods ------------------------------
+
+        /// <summary>
+        /// Stop the execution of the program and set the global
+        /// IsAlive instance to false (with time delay, 5 sec).
+        /// </summary>
+        public static void Exit()
+        {
+            Logger.Log("Bye bye... :) ");
+            IsAlive = false;
+            Thread.Sleep(5000);
+            Environment.Exit(0);
+        }
 
 		/// <summary>
 		/// The entry point of the program.

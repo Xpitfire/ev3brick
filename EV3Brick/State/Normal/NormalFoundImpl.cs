@@ -4,9 +4,14 @@
     {
         public const string Name = "NormalFound";
 
-        protected override void PerformAction()
+        protected override void PerformRecurrentAction()
         {
             // TODO implement found handling
+        }
+
+        protected override void PerformSingleAction()
+        {
+            // TODO implement action
         }
 
         public override object[] Debug(object[] args)
@@ -18,5 +23,6 @@
         {
             return Name;
         }
+
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading;
 using PrgSps2Gr1.Control;
+using PrgSps2Gr1.Logging;
+using Timer = PrgSps2Gr1.Utility.Timer;
 
 namespace PrgSps2Gr1.State.Normal
 {
@@ -10,16 +12,20 @@ namespace PrgSps2Gr1.State.Normal
 
         internal NormalDriveImpl()
         {
-            new Thread(() =>
-            {
-                Thread.Sleep(5000);
-                EventQueue.EnqueueState(NormalSearchImpl.Name);
-            }).Start();
+            Timer.TickTimeout = Timer.TickTime.Short;
         }
 
-        protected override void PerformAction()
+        protected override void PerformRecurrentAction()
         {
-            Ev3.VehicleDrive((sbyte) DeviceConstants.Speed.Slow);
+            if (Timer.IsTimeout())
+            {
+                EventQueue.EnqueueState(NormalSearchImpl.Name);
+            }
+        }
+
+        protected override void PerformSingleAction()
+        {
+            Ev3.VehicleDrive((sbyte)DeviceConstants.Speed.Slow);
         }
 
         public override object[] Debug(object[] args)

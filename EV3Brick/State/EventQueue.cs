@@ -12,32 +12,11 @@ namespace PrgSps2Gr1.State
 		private static readonly Queue<Action> CommandEventQueue = new Queue<Action>();
         private static string _lastState;
 
-        internal static string LastState
-        {
-            get
-            {
-                lock (SyncState)
-                {
-                    if (ProgramEv3Sps2Gr1.IsDebug)
-                    {
-                        Logger.Log("[Debug] LastState: " + _lastState);
-                    }
-                    return _lastState;
-                }
-            } 
-            set
-            {
-                lock (SyncState)
-                {
-                    if (ProgramEv3Sps2Gr1.IsDebug)
-                    {
-                        Logger.Log("[Debug] LastState: " + _lastState);
-                    }
-                    _lastState = value;
-                }
-            }
-        }
+        #region State Queue Operations
 
+        /// <summary>
+        /// Access thread save to a queue instance.
+        /// </summary>
         private static Queue<string> State
         {
             get {
@@ -48,19 +27,16 @@ namespace PrgSps2Gr1.State
             }
         }
 
-        private static Queue<Action> Command
-        {
-            get {
-                lock (SyncCommand)
-                {
-                    return CommandEventQueue;
-                }
-            }
-        }
-
+        /// <summary>
+        /// Enques a state only if the queue does not contain this it.
+        /// </summary>
+        /// <param name="s"></param>
         public static void EnqueueState(string s)
         {
-            State.Enqueue(s);
+            if (!State.Contains(s))
+            {
+                State.Enqueue(s);
+            }
         }
 
         public static string DequeueState()
@@ -68,14 +44,52 @@ namespace PrgSps2Gr1.State
             return State.Dequeue();
         }
 
+        /// <summary>
+        /// Return the number of elements in the state queue.
+        /// </summary>
+        /// <returns></returns>
         public static int GetStateCount()
         {
             return State.Count;
         }
 
+        /// <summary>
+        /// Returns the last operated state.
+        /// </summary>
+        internal static string LastState
+        {
+            get { lock (SyncState) { return _lastState; } }
+            set { lock (SyncState) { _lastState = value; } }
+        }
+
+        #endregion
+
+        #region Command Queue Operations
+
+        /// <summary>
+        /// Access thread save to a queue instance.
+        /// </summary>
+        private static Queue<Action> Command
+        {
+            get
+            {
+                lock (SyncCommand)
+                {
+                    return CommandEventQueue;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Enqueues an action if the queue does not already contain it.
+        /// </summary>
+        /// <param name="a"></param>
         public static void EnqueueCommand(Action a)
         {
-            Command.Enqueue(a);
+            if (!Command.Contains(a))
+            {
+                Command.Enqueue(a);
+            }
         }
 
         public static Action DequeueCommand()
@@ -83,10 +97,27 @@ namespace PrgSps2Gr1.State
             return Command.Dequeue();
         }
 
+        /// <summary>
+        /// Remove all elements from the command queue.
+        /// </summary>
+        public static void ClearCommandQueue()
+        {
+            if (Command.Count > 0)
+            {
+                Command.Clear();
+            }
+        }
+
+        /// <summary>
+        /// Return the number of elements in the state queue.
+        /// </summary>
+        /// <returns></returns>
         public static int GetCommandCount()
         {
             return Command.Count;
         }
+
+        #endregion
 
     }
 }

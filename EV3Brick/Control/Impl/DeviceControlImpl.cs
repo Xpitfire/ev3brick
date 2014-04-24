@@ -9,6 +9,8 @@ namespace PrgSps2Gr1.Control.Impl
 {
     public class DeviceControlImpl : IDeviceControl
     {
+        # region Local Variables
+
         private readonly ButtonEvents _buttonEvents;
         private const float MinObjectDistanceDelta = 100F;
         private const int SpinningSpeed = 10;
@@ -25,14 +27,18 @@ namespace PrgSps2Gr1.Control.Impl
         private const int MaxSpin = 35;
         private const int SpinStep = 5;
 
+        # endregion
+
+        #region Properties
+
         public Color SavedColor { get; set; }
 
-        // ----- class events -----
+        #endregion
 
-        public event Action EscapeReleasedButtonEvent;
-        public event Action EnterReleasedButtonEvent;
-        public event Action ReachedEdgeEvent;
-        
+        /// <summary>
+        /// Constructor: initializes the Firmware communication Devices
+        /// to interact with the Monobrick API.
+        /// </summary>
         public DeviceControlImpl()
         {
             // start the general sensor monitoring thread
@@ -40,8 +46,8 @@ namespace PrgSps2Gr1.Control.Impl
             thread.Start();
             // init ev3 button events
             _buttonEvents = new ButtonEvents();
-            _buttonEvents.EscapeReleased += EscapeReleasedButtonEvent;
-            _buttonEvents.EnterReleased += EnterReleasedButtonEvent;
+            _buttonEvents.EscapeReleased += () => OnEscapeReleasedButtonEvent(null, null);
+            _buttonEvents.EnterReleased += () => OnEnterReleasedButtonEvent(null, null);
 
             // init motors
             _motorSensorSpinner = new Motor(MotorPort.OutB);
@@ -64,17 +70,39 @@ namespace PrgSps2Gr1.Control.Impl
 			_spinClockwise = true;
         }
 
-        // ----- events call implementation -----
+        #region Ev3 Events
 
-        protected virtual void OnReachedEdgeEvent()
+        // ----- events declaration -----
+
+        public event Action EscapeReleasedButtonEvent;
+        public event Action EnterReleasedButtonEvent;
+        public event Action ReachedEdgeEvent;
+        
+        // ----- events implementation -----
+
+        protected void OnReachedEdgeEvent(object sender, EventArgs e)
         {
             var handler = ReachedEdgeEvent;
             if (handler != null) handler();
         }
 
-        // ----- ev3 utility method usage -----
+        public void OnEscapeReleasedButtonEvent(object sender, EventArgs e)
+        {
+            var handler = EscapeReleasedButtonEvent;
+            if (handler != null) handler();
+        }
 
-		/// <summary>
+        public void OnEnterReleasedButtonEvent(object sender, EventArgs e)
+        {
+            var handler = EnterReleasedButtonEvent;
+            if (handler != null) handler();
+        }
+
+        # endregion
+
+        #region Ev3 Firmware / Device implementation
+
+        /// <summary>
 		/// Drive straight with the given speed.
 		/// </summary>
 		/// <param name="speed">Speed.</param>
@@ -196,7 +224,7 @@ namespace PrgSps2Gr1.Control.Impl
             {
 				if (changed && (_touchSensor != null) && _touchSensor.IsPressed())
                 {
-                    OnReachedEdgeEvent();
+                    OnReachedEdgeEvent(null, null);
                     changed = false;
                 }
                 else if (!changed && !_touchSensor.IsPressed())
@@ -206,6 +234,8 @@ namespace PrgSps2Gr1.Control.Impl
                 Thread.Sleep(100);
             }
         }
+
+        #endregion
 
         public object[] Debug(object[] args)
         {

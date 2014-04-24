@@ -13,6 +13,12 @@ namespace PrgSps2Gr1.Control
 
         private DeviceControlFactory() { }
 
+        /// <summary>
+        /// Returns an IDeviceControl instance depending on the debug flag
+        /// in the <code>ProgramEv3Sps2Gr1</code> class.
+        /// It can variate between an simulation instance and the real-time
+        /// Ev3 Firmware control implementation.
+        /// </summary>
         public static IDeviceControl Ev3Control
         {
             get

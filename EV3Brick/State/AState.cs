@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading;
 using PrgSps2Gr1.Control;
 using PrgSps2Gr1.Debug;
@@ -11,7 +12,12 @@ namespace PrgSps2Gr1.State
 {
     abstract class AState : IDebug
     {
+        /// <summary>
+        /// Controller instance, which holds the current operated state.
+        /// </summary>
         private static ProgramEv3Sps2Gr1 _controller;
+
+        #region Inheritable Properties
 
         protected IDeviceControl Ev3
         {
@@ -38,53 +44,68 @@ namespace PrgSps2Gr1.State
             set { throw new System.NotImplementedException(); }
         }
 
+        #endregion
+
         /// <summary>
         /// AState constructor to inistialize the base class instances.
         /// </summary>
         protected AState()
         {
             // add anonymous method action to event queue
-            Ev3.EscapeReleasedButtonEvent += () => EventQueue.EnqueueState(MasterExitImpl.Name);
-            Ev3.EnterReleasedButtonEvent += handlePauseAndResume;
+            Ev3.EscapeReleasedButtonEvent += () => EventQueue.EnqueueState(MasterExitImpl.Name);;
+            Ev3.EnterReleasedButtonEvent += () => EventQueue.EnqueueState(MasterPauseImpl.Name);
             Ev3.ReachedEdgeEvent += () => EventQueue.EnqueueState(ErrorEdgeImpl.Name);
         }
+        
+        #region State Update Methods
 
         /// <summary>
-        /// Handle how to interpret pause button interaction.
+        /// Mothod which has to be implemented by all inheriting state sub-classes, to perform
+        /// polling specific behavior. This method is permanently called by an external 
+        /// state controller.
         /// </summary>
-        private void handlePauseAndResume() 
-        {
-            if ((_controller != null) && !(_controller.ProgramAState is MasterPauseImpl))
-            {
-                EventQueue.EnqueueState(MasterPauseImpl.Name);
-            }
-            else if (EventQueue.LastState != null)
-            {
-                EventQueue.EnqueueState(EventQueue.LastState);
-            }
-        }
+        protected abstract void PerformRecurrentAction();
 
         /// <summary>
-        /// Mothod to override from the implementing sub-classes.
+        /// Mothod which has to be implemented by all inheriting state sub-classes.
+        /// It can be used to implement single event logic, which is beeing called
+        /// on state change and the action occurred is added to the command queue for execution.
         /// </summary>
-        protected abstract void PerformAction();
-
-        public abstract object[] Debug(object[] args);
+        protected abstract void PerformSingleAction();
 
         /// <summary>
-        /// Sets a new AState instance in the controller.
+        /// Sets a new AState instance to the controller. Also the old state of the controller will be added
+        /// to the <code>LastState</code> object, if the new state differes from the old one.
         /// </summary>
         /// <param name="newAState"></param>
         private void SetState(AState newAState)
         {
-            if (Equals(newAState)) return;
-			Logger.Log("StateChanged: " + newAState);
-            EventQueue.LastState = _controller.ProgramAState.ToString();
+            if (Equals(newAState))
+            {
+                return;
+            }
+            // save current state to EventQueue.LastState only if the new state is a different one
+            if (_controller != null && _controller.ProgramAState != null &&
+                (EventQueue.LastState == null || (EventQueue.LastState != _controller.ProgramAState.ToString())))
+            {
+                EventQueue.LastState = _controller.ProgramAState.ToString();
+            }
+            // set new state to the controller
+            if (_controller == null)
+            {
+                throw new Exception("Invalid state behavior!");
+            }
+            Logger.Log("StateChanged: " + newAState);
             _controller.ProgramAState = newAState;
         }
 
         /// <summary>
-        /// Update sequence called by the controller.
+        /// Update sequence called by the controller. Is based on two event queues. One is for the state
+        /// machine behavior responsible and one for the command events commited by an current state.
+        /// In general this method polls on the <code>PerformRecurrentAction</code> method implemented by
+        /// the state sub-classes and dequeues the commands form an command queue, until a new state object 
+        /// is available. A state change will clear the current actions from the command queue and
+        /// repeat the previous sequences. 
         /// </summary>
         public void Update()
         {
@@ -97,12 +118,21 @@ namespace PrgSps2Gr1.State
                 }
                 Thread.Sleep(100);
                 // perform sub-class default action
-                PerformAction();
+                PerformRecurrentAction();
 			}
+
+            // if the state queue is empty return
+            if (EventQueue.GetStateCount() <= 0)
+            {
+                return;
+            }
+            // clear previous commands from the command queue
+            EventQueue.ClearCommandQueue();
 
             // set the next AState by converting the AState name queue entry
             var stateName = EventQueue.DequeueState();
             AState aState = null;
+            // convert the state name (string) to a new state object
             switch (stateName)
             {
                 case ErrorEdgeImpl.Name:
@@ -130,15 +160,32 @@ namespace PrgSps2Gr1.State
                     aState = new NormalSearchImpl();
                     break;
             }
+            // set the new state to the controller
             SetState(aState);
+            // invoke the single action after state change
+            System.Diagnostics.Debug.Assert(aState != null, "aState != null");
+            aState.PerformSingleAction();
         }
 
-        // ----- default class implementation methods -----
+        #endregion
+
+        // ----- default class implementations or inheritable methods -----
 
         public override bool Equals(object o)
         {
-            return o != null && Equals(ToString(), o.ToString());
+            return o != null && o is AState && (ToString() == o.ToString());
         }
 
+        protected bool Equals(AState other)
+        {
+            return other != null && (ToString() == other.ToString());
+        }
+
+        public override int GetHashCode()
+        {
+            return ToString().GetHashCode();
+        }
+
+        public abstract object[] Debug(object[] args);
     }
 }

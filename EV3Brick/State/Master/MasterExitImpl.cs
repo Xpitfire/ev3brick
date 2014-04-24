@@ -7,12 +7,17 @@ namespace PrgSps2Gr1.State.Master
     {
         public const string Name = "MasterExit";
 
-        protected override void PerformAction()
+        protected override void PerformRecurrentAction()
+        {
+            // nothing must be called
+        }
+
+        protected override void PerformSingleAction()
         {
             Logger.Log("Stopping motors");
             Ev3.StopAllMovements();
             Logger.Log("Exiting application...");
-            base.Controller.Exit();
+            ProgramEv3Sps2Gr1.Exit();
         }
 
         public override object[] Debug(object[] args)
@@ -24,5 +29,6 @@ namespace PrgSps2Gr1.State.Master
         {
             return Name;
         }
+
     }
 }

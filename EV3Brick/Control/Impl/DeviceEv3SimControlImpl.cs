@@ -1,4 +1,5 @@
 ﻿using System;
+using PrgSps2Gr1.Logging;
 
 namespace PrgSps2Gr1.Control.Impl
 {
@@ -7,21 +8,43 @@ namespace PrgSps2Gr1.Control.Impl
         private static readonly object Sync = new object();
 
         private static DeviceEv3SimControlImpl _instance;
+        private string _consoleText;
+
+        public string Ev3ConsoleText
+        {
+            get { lock (Sync) return _consoleText; }
+        }
+
+        #region Ev3 Simulation Events
 
         public event Action EscapeReleasedButtonEvent;
         public event Action EnterReleasedButtonEvent;
         public event Action ReachedEdgeEvent;
 
-        public int SpinScannerCnt { get; set; }
-
-        private string _consoleText;
-        public string Ev3ConsoleText { 
-            get 
-            { 
-                lock (Sync) return _consoleText; 
-            } 
+        public void OnEscapeReleasedButtonEvent(object sender, EventArgs e)
+        {
+            var handler = EscapeReleasedButtonEvent;
+            if (handler != null) handler();
         }
 
+        public void OnEnterReleasedButtonEvent(object sender, EventArgs e)
+        {
+            var handler = EnterReleasedButtonEvent;
+            if (handler != null) handler();
+        }
+
+        public void OnReachedEdgeEvent(object sender, EventArgs e)
+        {
+            var handler = ReachedEdgeEvent;
+            if (handler != null) handler();
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Private constructor to create a sigleton for external
+        /// simulation tests.
+        /// </summary>
         private DeviceEv3SimControlImpl()
         {
             _instance = this;
@@ -29,52 +52,34 @@ namespace PrgSps2Gr1.Control.Impl
 
         public static DeviceEv3SimControlImpl GetInstance()
         {
-            if (_instance == null)
-            {
-                _instance = new DeviceEv3SimControlImpl();
-            }
-            return _instance;
+            return _instance ?? (_instance = new DeviceEv3SimControlImpl());
         }
 
-        public void OnEscapeReleasedButtonEvent(object sender, EventArgs e)
-        {
-            EscapeReleasedButtonEvent.Invoke();
-        }
-
-        public void OnEnterReleasedButtonEvent(object sender, EventArgs e)
-        {
-            EnterReleasedButtonEvent.Invoke();
-        }
-
-        public void OnReachedEdgeEvent(object sender, EventArgs e)
-        {
-            ReachedEdgeEvent.Invoke();
-        }
-
+        #region Ev3 Device simulated implementaiton
 
         public void SpinScanner(bool active)
         {
-            SpinScannerCnt++;
+            Logger.Log("SpinScanner action: active = " + active);
         }
 
         public void StopAllMovements()
         {
-            // TODO implement
+            Logger.Log("StopAllMovements action");
         }
 
         public void VehicleDrive(sbyte speed)
         {
-            // TODO implement
+            Logger.Log("VehicleDrive action: speed = " + speed);
         }
 
         public void VehicleStop()
         {
-            // TODO implement
+            Logger.Log("VehicleStop action");
         }
 
         public void VehicleReverse(DeviceConstants.TurnDirection turn, sbyte speed, sbyte turnPercent)
         {
-            // TODO implement
+            Logger.Log("VehicleReverse action: turn = " + turn + ", speed = " + speed + ", turnPercent = " + turnPercent);
         }
 
         public void WriteLine(string s)
@@ -84,6 +89,8 @@ namespace PrgSps2Gr1.Control.Impl
                 _consoleText += "\n" + s;
             }
         }
+
+        #endregion
 
         public object[] Debug(object[] args)
         {
