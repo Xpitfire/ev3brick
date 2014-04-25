@@ -1,5 +1,4 @@
 ﻿using System.Threading;
-using Timer = PrgSps2Gr1.Utility.Timer;
 
 namespace PrgSps2Gr1.State.Normal
 {
@@ -9,21 +8,22 @@ namespace PrgSps2Gr1.State.Normal
 
         internal NormalSearchImpl()
         {
-            Timer.TickTimeout = Timer.TickTime.Short;
+            StateTimer.TickTimeout = Utility.Ev3Timer.TickTime.Long;
         }
 
         protected override void PerformRecurrentAction()
         {
             // TODO implements search procedure...
-            if (Timer.IsTimeout())
+            if (StateTimer.IsTimeout())
             {
-                EventQueue.EnqueueState(NormalDriveImpl.Name);
+                EventQueue.EnqueueState(NormalAdjustImpl.Name);
             }
         }
 
         protected override void PerformSingleAction()
         {
             Ev3.StopAllMovements();
+            Ev3.SpinVehicle();
         }
 
         public override object[] Debug(object[] args)

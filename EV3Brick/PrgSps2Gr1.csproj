@@ -58,7 +58,7 @@
     <Compile Include="ProgramEv3Sps2Gr1.cs" />
     <Compile Include="Control\Impl\DeviceControlImpl.cs" />
     <Compile Include="State\Init\InitImpl.cs" />
-    <Compile Include="State\Normal\NormalDriveImpl.cs" />
+    <Compile Include="State\Normal\NormalFollowImpl.cs" />
     <Compile Include="State\AState.cs" />
     <Compile Include="Logging\Logger.cs" />
     <Compile Include="Utility\Timer.cs" />

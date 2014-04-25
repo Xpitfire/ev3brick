@@ -15,6 +15,7 @@ namespace PrgSps2Gr1.State.Normal
         {
             // TODO implement action
             Logger.Log("Analyse object not implemented!");
+            Ev3.StopAllMovements();
         }
 
         public override object[] Debug(object[] args)

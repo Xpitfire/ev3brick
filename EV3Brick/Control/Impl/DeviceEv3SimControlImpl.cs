@@ -20,6 +20,8 @@ namespace PrgSps2Gr1.Control.Impl
         public event Action EscapeReleasedButtonEvent;
         public event Action EnterReleasedButtonEvent;
         public event Action ReachedEdgeEvent;
+        public event Action IdentifyObjectEvent;
+        public event Action DetectedObjectEvent;
 
         public void OnEscapeReleasedButtonEvent(object sender, EventArgs e)
         {
@@ -36,6 +38,12 @@ namespace PrgSps2Gr1.Control.Impl
         public void OnReachedEdgeEvent(object sender, EventArgs e)
         {
             var handler = ReachedEdgeEvent;
+            if (handler != null) handler();
+        }
+
+        public void OnDetectedObjectEvent(object sender, EventArgs e)
+        {
+            var handler = DetectedObjectEvent;
             if (handler != null) handler();
         }
 
@@ -57,14 +65,25 @@ namespace PrgSps2Gr1.Control.Impl
 
         #region Ev3 Device simulated implementaiton
 
-        public void SpinScanner(bool active)
+        public void InitSpinScanner()
         {
-            Logger.Log("SpinScanner action: active = " + active);
+            Logger.Log("InitSpinScanner action");
+        }
+
+        public bool HasLostObject()
+        {
+            Logger.Log("HasLostObject action not implemented --> true");
+            return true;
         }
 
         public void StopAllMovements()
         {
             Logger.Log("StopAllMovements action");
+        }
+
+        public void SpinVehicle()
+        {
+            Logger.Log("SpinVehicle action");
         }
 
         public void VehicleDrive(sbyte speed)

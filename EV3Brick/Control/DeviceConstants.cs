@@ -8,12 +8,36 @@ namespace PrgSps2Gr1.Control
 {
     public class DeviceConstants
     {
-        public enum Speed
+        public struct Speed
         {
-            Slow = 10,
-            Medium = 50,
-            Fast = 70,
-            Turbo = 100
+            /// <summary>
+            /// <code>Slowest</code> = 10 %
+            /// </summary>
+            public static readonly sbyte Slowest = 10;
+            /// <summary>
+            /// <code>Slower</code> = 20 %
+            /// </summary>
+            public static readonly sbyte Slower = 20;
+            /// <summary>
+            /// <code>Slow</code> = 30 %
+            /// </summary>
+            public static readonly sbyte Slow = 30;
+            /// <summary>
+            /// <code>Medium</code> = 50 %
+            /// </summary>
+            public static readonly sbyte Medium = 50;
+            /// <summary>
+            /// <code>Fast</code> = 70 %
+            /// </summary>
+            public static readonly sbyte Fast = 70;
+            /// <summary>
+            /// <code>Faster</code> = 80 %
+            /// </summary>
+            public static readonly sbyte Faster = 80;
+            /// <summary>
+            /// <code>Fastest</code> = 100 %
+            /// </summary>
+            public static readonly sbyte Fastest = 100;
         }
 
         public enum TurnDirection

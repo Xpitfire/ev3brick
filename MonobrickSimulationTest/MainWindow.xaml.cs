@@ -58,17 +58,22 @@ namespace MonobrickSimulationTest
 
         private void ButtonExit_Click(object sender, RoutedEventArgs e)
         {
-            DeviceEv3SimControlImpl.GetInstance().OnEscapeReleasedButtonEvent(null, null);
+            DeviceEv3SimControlImpl.GetInstance().OnEscapeReleasedButtonEvent(sender, e);
         }
 
         private void ButtonEnter_Click(object sender, RoutedEventArgs e)
         {
-            DeviceEv3SimControlImpl.GetInstance().OnEnterReleasedButtonEvent(null, null);
+            DeviceEv3SimControlImpl.GetInstance().OnEnterReleasedButtonEvent(sender, e);
         }
 
         private void ButtonReachedEdgeEvent_Click(object sender, RoutedEventArgs e)
         {
-            DeviceEv3SimControlImpl.GetInstance().OnReachedEdgeEvent(null, null);
+            DeviceEv3SimControlImpl.GetInstance().OnReachedEdgeEvent(sender, e);
+        }
+
+        private void ButtonObjectDetected_Click(object sender, RoutedEventArgs e)
+        {
+            DeviceEv3SimControlImpl.GetInstance().OnDetectedObjectEvent(sender, e);
         }
           
     }

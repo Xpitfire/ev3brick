@@ -3,7 +3,7 @@ using System.Threading;
 using PrgSps2Gr1.Logging;
 using PrgSps2Gr1.State;
 using PrgSps2Gr1.State.Init;
-using Timer = PrgSps2Gr1.Utility.Timer;
+using PrgSps2Gr1.Utility;
 
 namespace PrgSps2Gr1
 {
@@ -59,7 +59,7 @@ namespace PrgSps2Gr1
                 {
                     ProgramAState.Update();
                 }
-                Thread.Sleep(Timer.TickTime.ExtraShort);
+                Thread.Sleep(Ev3Timer.TickTime.Shortest);
             }
         }
 

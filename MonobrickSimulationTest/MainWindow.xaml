@@ -20,5 +20,6 @@
         <Button x:Name="ButtonRight" Content="Right" HorizontalAlignment="Left" Margin="260,130,0,0" VerticalAlignment="Top" Width="44" Height="34"/>
         <Label x:Name="LableControls" Content="EV3 Controls" HorizontalAlignment="Left" Margin="35,10,0,0" VerticalAlignment="Top"/>
         <Label x:Name="LableProgramEvents" Content="EV3 Program Events" HorizontalAlignment="Left" Margin="35,250,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="ButtonObjectDetected" Content="ObjectDetected" HorizontalAlignment="Left" Margin="35,308,0,0" VerticalAlignment="Top" Width="114" Height="22" Click="ButtonObjectDetected_Click"/>
     </Grid>
 </Window>

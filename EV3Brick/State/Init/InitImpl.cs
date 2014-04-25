@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Threading;
 using PrgSps2Gr1.Logging;
 using PrgSps2Gr1.State.Normal;
-using Timer = PrgSps2Gr1.Utility.Timer;
+using PrgSps2Gr1.Utility;
 
 namespace PrgSps2Gr1.State.Init
 {
@@ -15,22 +14,30 @@ namespace PrgSps2Gr1.State.Init
             // set the abstract state controller instance
             Controller = project;
             // set timeout for state change
-            Timer.TickTimeout = Timer.TickTime.Short;
+            StateTimer.TickTimeout = Ev3Timer.TickTime.Short;
+            EventQueue.EnqueueCommand(superScanning);
+            PerformSingleAction();
         }
 
         protected override void PerformRecurrentAction()
         {
             // initialize components
-            if (Timer.IsTimeout())
+            if (StateTimer.IsTimeout())
             {
-                EventQueue.EnqueueState(NormalDriveImpl.Name);
+                EventQueue.EnqueueState(NormalSearchImpl.Name);
             }
         }
 
-        protected override void PerformSingleAction()
+        protected override sealed void PerformSingleAction()
         {
             // TODO implement action
             Logger.Log("Color sensor initialization not implemented!");
+            Ev3.InitSpinScanner();
+        }
+
+        private void superScanning()
+        {
+            Logger.Log("do somthing;!!");
         }
 
         public override object[] Debug(object[] args)

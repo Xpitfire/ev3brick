@@ -2,16 +2,23 @@
 using System.IO;
 using System.Threading;
 using PrgSps2Gr1.Control;
+using PrgSps2Gr1.Control.Impl;
 using PrgSps2Gr1.Debug;
 using PrgSps2Gr1.Logging;
 using PrgSps2Gr1.State.Error;
 using PrgSps2Gr1.State.Master;
 using PrgSps2Gr1.State.Normal;
+using PrgSps2Gr1.Utility;
 
 namespace PrgSps2Gr1.State
 {
     abstract class AState : IDebug
     {
+        /// <summary>
+        /// This timer is used to process time delayed operations.
+        /// </summary>
+        protected Ev3Timer StateTimer = new Ev3Timer();
+
         /// <summary>
         /// Controller instance, which holds the current operated state.
         /// </summary>
@@ -37,13 +44,7 @@ namespace PrgSps2Gr1.State
             }
             get { return _controller; }
         }
-
-        protected int DetectedObjectDegree
-        {
-            get { throw new System.NotImplementedException(); }
-            set { throw new System.NotImplementedException(); }
-        }
-
+        
         #endregion
 
         /// <summary>
@@ -52,11 +53,18 @@ namespace PrgSps2Gr1.State
         protected AState()
         {
             // add anonymous method action to event queue
-            Ev3.EscapeReleasedButtonEvent += () => EventQueue.EnqueueState(MasterExitImpl.Name);;
+            Ev3.EscapeReleasedButtonEvent += () => EventQueue.EnqueueState(MasterExitImpl.Name);
             Ev3.EnterReleasedButtonEvent += () => EventQueue.EnqueueState(MasterPauseImpl.Name);
-            Ev3.ReachedEdgeEvent += () => EventQueue.EnqueueState(ErrorEdgeImpl.Name);
+            Ev3.ReachedEdgeEvent += ReachedEdgeOrObjectDetected;
+            Ev3.IdentifyObjectEvent += () => EventQueue.EnqueueState(NormalIdentifyImpl.Name);
+            Ev3.DetectedObjectEvent += () => EventQueue.EnqueueState(NormalFollowImpl.Name);
         }
-        
+
+        private void ReachedEdgeOrObjectDetected()
+        {
+            EventQueue.EnqueueState(Ev3.HasLostObject() ? ErrorEdgeImpl.Name : NormalIdentifyImpl.Name);
+        }
+
         #region State Update Methods
 
         /// <summary>
@@ -147,8 +155,8 @@ namespace PrgSps2Gr1.State
                 case NormalAdjustImpl.Name:
                     aState = new NormalAdjustImpl();
                     break;
-                case NormalDriveImpl.Name:
-                    aState = new NormalDriveImpl();
+                case NormalFollowImpl.Name:
+                    aState = new NormalFollowImpl();
                     break;
                 case NormalFoundImpl.Name:
                     aState = new NormalFoundImpl();

@@ -4,6 +4,8 @@ using MonoBrickFirmware.Display;
 using MonoBrickFirmware.Movement;
 using MonoBrickFirmware.Sensors;
 using MonoBrickFirmware.UserInput;
+using PrgSps2Gr1.Logging;
+using PrgSps2Gr1.Utility;
 
 namespace PrgSps2Gr1.Control.Impl
 {
@@ -21,17 +23,21 @@ namespace PrgSps2Gr1.Control.Impl
         private readonly TouchSensor _touchSensor;
 		private readonly  EV3ColorSensor _colorSensor; //NXTColorSensor _colorSensor;
         private readonly Motor _motorSensorSpinner;
+        private readonly Ev3Timer _oscillationTimer = new Ev3Timer();
+        private readonly Ev3Timer _reactivationTimer = new Ev3Timer();
         private int _spinDegree;
         private bool _spinClockwise;
-        private const int MinSpin = -35;
+        private const int MinSpin = 0;
         private const int MaxSpin = 35;
-        private const int SpinStep = 5;
+        private bool _objDetectedChange = true;
 
         # endregion
 
         #region Properties
 
         public Color SavedColor { get; set; }
+
+        public bool UseSpinScanner { get; set; }
 
         #endregion
 
@@ -44,13 +50,23 @@ namespace PrgSps2Gr1.Control.Impl
             // start the general sensor monitoring thread
             var thread = new Thread(SensorMonitorWorkThread);
             thread.Start();
+            thread = new Thread(ControlSpinScannerThread);
+            thread.Start();
+
             // init ev3 button events
             _buttonEvents = new ButtonEvents();
             _buttonEvents.EscapeReleased += () => OnEscapeReleasedButtonEvent(null, null);
             _buttonEvents.EnterReleased += () => OnEnterReleasedButtonEvent(null, null);
 
-            // init motors
-            _motorSensorSpinner = new Motor(MotorPort.OutB);
+            // init motor spinner
+            _motorSensorSpinner = new Motor(MotorPort.OutC);
+            // init ev3 default settings
+            _spinDegree = 0;
+            _motorSensorSpinner.ResetTacho();
+            _spinClockwise = true;
+            UseSpinScanner = true;
+
+            // init motor drive
             _vehicle = new Vehicle(MotorPort.OutA, MotorPort.OutD);
 
             // init sensors
@@ -63,11 +79,6 @@ namespace PrgSps2Gr1.Control.Impl
             // init display
             _lcd = new Lcd();
             _lcd.Clear();
-
-            // init ev3 default settings
-            _spinDegree = 0;
-            _motorSensorSpinner.ResetTacho();
-			_spinClockwise = true;
         }
 
         #region Ev3 Events
@@ -77,7 +88,9 @@ namespace PrgSps2Gr1.Control.Impl
         public event Action EscapeReleasedButtonEvent;
         public event Action EnterReleasedButtonEvent;
         public event Action ReachedEdgeEvent;
-        
+        public event Action IdentifyObjectEvent;
+        public event Action DetectedObjectEvent;
+
         // ----- events implementation -----
 
         protected void OnReachedEdgeEvent(object sender, EventArgs e)
@@ -98,9 +111,26 @@ namespace PrgSps2Gr1.Control.Impl
             if (handler != null) handler();
         }
 
+        public void OnIdentifyObjectEvent(object sender, EventArgs e)
+        {
+            var handler = IdentifyObjectEvent;
+            if (handler != null) handler();
+        }
+
+        public void OnDetectedObjectEvent(object sender, EventArgs e)
+        {
+            var handler = DetectedObjectEvent;
+            if (handler != null) handler();
+        }
+
         # endregion
 
         #region Ev3 Firmware / Device implementation
+
+        public void SpinVehicle()
+        {
+            _vehicle.SpinLeft(DeviceConstants.Speed.Slower);
+        }
 
         /// <summary>
 		/// Drive straight with the given speed.
@@ -136,7 +166,22 @@ namespace PrgSps2Gr1.Control.Impl
             }
         }
 
-		/// <summary>
+        public void InitSpinScanner()
+        {
+            SpinScannerMaxPlusPos(null, null);
+        }
+
+        /// <summary>
+        /// Check if a object, which previously has been detected, has disappeared again.
+        /// </summary>
+        /// <returns><c>true</c>, if object is gone, <c>true</c> otherwise <c>false</c>.</returns>
+        public bool HasLostObject()
+        {
+            Logger.Log("HasLostObject = " + _objDetectedChange);
+            return _objDetectedChange;
+        }
+
+        /// <summary>
 		/// Stops all movements.
 		/// </summary>
         public void StopAllMovements()
@@ -151,46 +196,6 @@ namespace PrgSps2Gr1.Control.Impl
         public void VehicleStop()
         {
             _vehicle.Off();
-        }
-
-        public void SpinScanner(bool active)
-        {
-            if (!active) return;
-
-            if (_spinDegree >= MaxSpin)
-            {
-                _spinClockwise = false;
-            }
-            if (_spinDegree <= MinSpin)
-            {
-                _spinClockwise = true;
-            }
-
-            if (_spinClockwise)
-            {
-                _spinDegree += SpinStep;
-            }
-            else
-            {
-                _spinDegree -= SpinStep;
-            }
-            
-			//_motorSensorSpinner.MoveTo(SpinningSpeed, _spinDegree, false, false);
-			//_motorSensorSpinner.On (SpinningSpeed, (uint)_spinDegree, false, false);
-			//WriteLine("Des is -->" + _motorSensorSpinner.GetTachoCount());
-			WriteLine("color: " + _colorSensor.ReadColor());
-			WriteLine("  raw: " + _colorSensor.ReadRaw().ToString());
-             
-        }
-
-		/// <summary>
-		/// Check if a object is detected by using the IR sensor.
-		/// </summary>
-		/// <returns><c>true</c>, if detected was objected, <c>false</c> otherwise.</returns>
-		/// <param name="atDistance">At distance.</param>
-        public bool ObjectDetected(int atDistance)
-        {
-            return _irSensor.ReadDistance() < atDistance ;
         }
 
 		/// <summary>
@@ -219,18 +224,82 @@ namespace PrgSps2Gr1.Control.Impl
         /// </summary>
         public void SensorMonitorWorkThread()
         {
-            var changed = true;
+            var touchSensorChange = true;
             while (ProgramEv3Sps2Gr1.IsAlive)
             {
-				if (changed && (_touchSensor != null) && _touchSensor.IsPressed())
+                // monitor touch sensor activity
+				if (touchSensorChange && _touchSensor != null && _touchSensor.IsPressed())
                 {
                     OnReachedEdgeEvent(null, null);
-                    changed = false;
+                    touchSensorChange = false;
                 }
-                else if (!changed && !_touchSensor.IsPressed())
+                else if (!touchSensorChange && _touchSensor != null && !_touchSensor.IsPressed())
                 {
-                    changed = true;
+                    touchSensorChange = true;
                 }
+
+                // monitor infrared sensor activity
+                if (_objDetectedChange && _irSensor != null && _irSensor.ReadDistance() < 40)
+                {
+                    OnDetectedObjectEvent(null, null);
+                    _objDetectedChange = false;
+                }
+                else if (!_objDetectedChange && _irSensor != null && _irSensor.ReadDistance() >= 40)
+                {
+                    _objDetectedChange = true;
+                }
+                
+                Thread.Sleep(100);
+            }
+        }
+
+        public void SpinScannerMaxPlusPos(object o, EventArgs e)
+        {
+            _oscillationTimer.Reset();
+            _motorSensorSpinner.MoveTo((byte)DeviceConstants.Speed.Slower, 35, true, false);
+        }
+
+        public void SpinScannerToMaxMinusPos(object o, EventArgs e)
+        {
+            _oscillationTimer.Reset();
+            _motorSensorSpinner.MoveTo((byte)DeviceConstants.Speed.Slower, -35, true, false);
+        }
+
+        public void ControlSpinScannerThread()
+        {
+            _oscillationTimer.TickTimeout = Ev3Timer.TickTime.Short;
+            _reactivationTimer.TickTimeout = Ev3Timer.TickTime.Long;
+            while (ProgramEv3Sps2Gr1.IsAlive)
+            {
+                // control motor spin scanner
+                if (UseSpinScanner)
+                {
+
+                    if (_oscillationTimer.IsTimeout() && _motorSensorSpinner.GetTachoCount() > 30)
+                    {
+                        SpinScannerToMaxMinusPos(null, null);
+                        _reactivationTimer.Reset();
+                    }
+
+                    if (_oscillationTimer.IsTimeout() && _motorSensorSpinner.GetTachoCount() < -30)
+                    {
+                        SpinScannerMaxPlusPos(null, null);
+                        _reactivationTimer.Reset();
+                    }
+
+
+                    if (_reactivationTimer.IsTimeout())
+                    {
+                        SpinScannerToMaxMinusPos(null, null);
+                        _reactivationTimer.Reset();
+                    } 
+                }
+                else
+                {
+                    _oscillationTimer.Reset();
+                    _reactivationTimer.Reset();
+                }
+
                 Thread.Sleep(100);
             }
         }

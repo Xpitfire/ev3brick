@@ -11,9 +11,17 @@ namespace PrgSps2Gr1.Control
 
         event Action ReachedEdgeEvent;
 
-        void SpinScanner(bool active);
+        event Action IdentifyObjectEvent;
 
+        event Action DetectedObjectEvent;
+
+        void InitSpinScanner();
+
+        bool HasLostObject();
+        
         void StopAllMovements();
+
+        void SpinVehicle();
 
         void VehicleDrive(sbyte speed);
 
