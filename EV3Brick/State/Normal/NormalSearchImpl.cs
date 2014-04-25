@@ -13,7 +13,6 @@ namespace PrgSps2Gr1.State.Normal
 
         protected override void PerformRecurrentAction()
         {
-            // TODO implements search procedure...
             if (StateTimer.IsTimeout())
             {
                 EventQueue.EnqueueState(NormalAdjustImpl.Name);

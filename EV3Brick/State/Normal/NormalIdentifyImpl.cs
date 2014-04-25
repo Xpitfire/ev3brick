@@ -1,4 +1,5 @@
 ﻿using PrgSps2Gr1.Logging;
+using PrgSps2Gr1.Utility;
 
 namespace PrgSps2Gr1.State.Normal
 {
@@ -6,15 +7,20 @@ namespace PrgSps2Gr1.State.Normal
     {
         public const string Name = "NormalIdentify";
 
+        internal NormalIdentifyImpl() {
+            StateTimer.TickTimeout = Ev3Timer.TickTime.Long;
+        }
+
         protected override void PerformRecurrentAction()
         {
-            // TODO implement identify
+            if (StateTimer.IsTimeout())
+            {
+                EventQueue.EnqueueState(NormalSearchImpl.Name);
+            }
         }
 
         protected override void PerformSingleAction()
         {
-            // TODO implement action
-            Logger.Log("Analyse object not implemented!");
             Ev3.StopAllMovements();
         }
 

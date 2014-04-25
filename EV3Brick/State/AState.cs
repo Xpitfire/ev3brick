@@ -6,6 +6,7 @@ using PrgSps2Gr1.Control.Impl;
 using PrgSps2Gr1.Debug;
 using PrgSps2Gr1.Logging;
 using PrgSps2Gr1.State.Error;
+using PrgSps2Gr1.State.Init;
 using PrgSps2Gr1.State.Master;
 using PrgSps2Gr1.State.Normal;
 using PrgSps2Gr1.Utility;
@@ -55,14 +56,44 @@ namespace PrgSps2Gr1.State
             // add anonymous method action to event queue
             Ev3.EscapeReleasedButtonEvent += () => EventQueue.EnqueueState(MasterExitImpl.Name);
             Ev3.EnterReleasedButtonEvent += () => EventQueue.EnqueueState(MasterPauseImpl.Name);
+            Ev3.UpReleasedButtonEvent += () => EventQueue.EnqueueState(NormalSearchImpl.Name);
             Ev3.ReachedEdgeEvent += ReachedEdgeOrObjectDetected;
-            Ev3.IdentifyObjectEvent += () => EventQueue.EnqueueState(NormalIdentifyImpl.Name);
-            Ev3.DetectedObjectEvent += () => EventQueue.EnqueueState(NormalFollowImpl.Name);
+            Ev3.IdentifiedEnemyEvent += IdentifiedEnemy;
+            Ev3.DetectedObjectEvent += DetectedObject;
+        }
+
+        private void DetectedObject()
+        {
+            if (Controller.ProgramAState != null 
+                && (Controller != null && (Controller.ProgramAState.ToString() != MasterPauseImpl.Name                                                            
+                && Controller.ProgramAState.ToString() != MasterExitImpl.Name
+                && Controller.ProgramAState.ToString() != InitImpl.Name)))
+            {
+                EventQueue.EnqueueState(NormalFollowImpl.Name);
+            }
         }
 
         private void ReachedEdgeOrObjectDetected()
         {
-            EventQueue.EnqueueState(Ev3.HasLostObject() ? ErrorEdgeImpl.Name : NormalIdentifyImpl.Name);
+            if (Controller.ProgramAState != null 
+                && (Controller != null && (Controller.ProgramAState.ToString() != MasterPauseImpl.Name
+                && Controller.ProgramAState.ToString() != MasterExitImpl.Name
+                && Controller.ProgramAState.ToString() != NormalFoundImpl.Name 
+                && Controller.ProgramAState.ToString() != InitImpl.Name)))
+            {
+                EventQueue.EnqueueState(Ev3.HasLostObject() ? ErrorEdgeImpl.Name : NormalIdentifyImpl.Name);
+            }
+        }
+
+        private void IdentifiedEnemy()
+        {
+            if (Controller.ProgramAState != null 
+                && (Controller != null && (Controller.ProgramAState.ToString() != MasterPauseImpl.Name
+                && Controller.ProgramAState.ToString() != MasterExitImpl.Name
+                && Controller.ProgramAState.ToString() != InitImpl.Name)))
+            {
+                EventQueue.EnqueueState(NormalFoundImpl.Name);
+            }
         }
 
         #region State Update Methods

@@ -14,22 +14,16 @@ namespace PrgSps2Gr1.Control.Impl
         # region Local Variables
 
         private readonly ButtonEvents _buttonEvents;
-        private const float MinObjectDistanceDelta = 100F;
-        private const int SpinningSpeed = 10;
         private readonly Vehicle _vehicle;
         private readonly IRSensor _irSensor;
-        private readonly UltraSonicSensor _ultraSonicSensor;
         private readonly Lcd _lcd;
         private readonly TouchSensor _touchSensor;
 		private readonly  EV3ColorSensor _colorSensor; //NXTColorSensor _colorSensor;
         private readonly Motor _motorSensorSpinner;
         private readonly Ev3Timer _oscillationTimer = new Ev3Timer();
         private readonly Ev3Timer _reactivationTimer = new Ev3Timer();
-        private int _spinDegree;
-        private bool _spinClockwise;
-        private const int MinSpin = 0;
-        private const int MaxSpin = 35;
         private bool _objDetectedChange = true;
+        private Color _enemyColor;
 
         # endregion
 
@@ -57,13 +51,12 @@ namespace PrgSps2Gr1.Control.Impl
             _buttonEvents = new ButtonEvents();
             _buttonEvents.EscapeReleased += () => OnEscapeReleasedButtonEvent(null, null);
             _buttonEvents.EnterReleased += () => OnEnterReleasedButtonEvent(null, null);
+            _buttonEvents.UpReleased += () => OnUpReleasedButtonEvent(null, null);
 
             // init motor spinner
             _motorSensorSpinner = new Motor(MotorPort.OutC);
             // init ev3 default settings
-            _spinDegree = 0;
             _motorSensorSpinner.ResetTacho();
-            _spinClockwise = true;
             UseSpinScanner = true;
 
             // init motor drive
@@ -72,7 +65,7 @@ namespace PrgSps2Gr1.Control.Impl
             // init sensors
             _irSensor = new IRSensor(SensorPort.In4);
             //_ultraSonicSensor = new UltraSonicSensor(SensorPort.In2, UltraSonicMode.Centimeter);
-			_colorSensor = new EV3ColorSensor (SensorPort.In1, ColorMode.Color);  //new NXTColorSensor(SensorPort.In2);
+			_colorSensor = new EV3ColorSensor (SensorPort.In1, ColorMode.Color);  //new NXTColorSensor(SensorPort.In2); 
 			//_colorSensor.Mode = ColorMode.Ambient;
 			_touchSensor = new TouchSensor(SensorPort.In2);
 
@@ -87,8 +80,9 @@ namespace PrgSps2Gr1.Control.Impl
 
         public event Action EscapeReleasedButtonEvent;
         public event Action EnterReleasedButtonEvent;
+        public event Action UpReleasedButtonEvent;
         public event Action ReachedEdgeEvent;
-        public event Action IdentifyObjectEvent;
+        public event Action IdentifiedEnemyEvent;
         public event Action DetectedObjectEvent;
 
         // ----- events implementation -----
@@ -111,9 +105,15 @@ namespace PrgSps2Gr1.Control.Impl
             if (handler != null) handler();
         }
 
-        public void OnIdentifyObjectEvent(object sender, EventArgs e)
+        public void OnUpReleasedButtonEvent(object sender, EventArgs e)
         {
-            var handler = IdentifyObjectEvent;
+            var handler = UpReleasedButtonEvent;
+            if (handler != null) handler();
+        }
+
+        public void OnIdentifiedEnemyEvent(object sender, EventArgs e)
+        {
+            var handler = IdentifiedEnemyEvent;
             if (handler != null) handler();
         }
 
@@ -177,7 +177,6 @@ namespace PrgSps2Gr1.Control.Impl
         /// <returns><c>true</c>, if object is gone, <c>true</c> otherwise <c>false</c>.</returns>
         public bool HasLostObject()
         {
-            Logger.Log("HasLostObject = " + _objDetectedChange);
             return _objDetectedChange;
         }
 
@@ -207,13 +206,14 @@ namespace PrgSps2Gr1.Control.Impl
             LcdConsole.WriteLine(s);
         }
 
-		/// <summary>
-		/// Read the color value of the color sensor.
-		/// </summary>
-		/// <returns>A color or none.</returns>
-        public Color ScanColor()
+        /// <summary>
+        /// Read the color value of the color sensor.
+        /// </summary>
+        /// <returns>A color or none.</returns>
+        public void InitColor()
         {
-            return _colorSensor.ReadColor();
+            _enemyColor = _colorSensor.ReadColor();
+            Logger.Log("Scanned enemy color: " + _enemyColor);
         }
 
         // ----- special event update thread for state behavior -----
@@ -221,6 +221,9 @@ namespace PrgSps2Gr1.Control.Impl
         /// <summary>
         /// Update thread to wrap the polling of sensor behaviors to a event base 
         /// system.
+        /// ATTENTION! Be aware when adding new sensor to check if they are null.
+        /// Because of a new init state multithreading call, a device may not be ready to
+        /// use on startup.
         /// </summary>
         public void SensorMonitorWorkThread()
         {
@@ -247,6 +250,12 @@ namespace PrgSps2Gr1.Control.Impl
                 else if (!_objDetectedChange && _irSensor != null && _irSensor.ReadDistance() >= 40)
                 {
                     _objDetectedChange = true;
+                }
+
+                // monitor color sensor activity
+                if (_colorSensor != null && _enemyColor == _colorSensor.ReadColor())
+                {
+                    OnIdentifiedEnemyEvent(null, null);
                 }
                 
                 Thread.Sleep(100);

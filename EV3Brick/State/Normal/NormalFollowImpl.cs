@@ -10,7 +10,7 @@ namespace PrgSps2Gr1.State.Normal
 
         internal NormalFollowImpl()
         {
-            StateTimer.TickTimeout = Ev3Timer.TickTime.Long;
+            StateTimer.TickTimeout = Ev3Timer.TickTime.Medium;
         }
 
         protected override void PerformRecurrentAction()

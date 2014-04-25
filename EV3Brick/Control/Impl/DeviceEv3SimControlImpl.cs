@@ -19,8 +19,9 @@ namespace PrgSps2Gr1.Control.Impl
 
         public event Action EscapeReleasedButtonEvent;
         public event Action EnterReleasedButtonEvent;
+        public event Action UpReleasedButtonEvent;
         public event Action ReachedEdgeEvent;
-        public event Action IdentifyObjectEvent;
+        public event Action IdentifiedEnemyEvent;
         public event Action DetectedObjectEvent;
 
         public void OnEscapeReleasedButtonEvent(object sender, EventArgs e)
@@ -35,6 +36,12 @@ namespace PrgSps2Gr1.Control.Impl
             if (handler != null) handler();
         }
 
+        public void OnUpReleasedButtonEvent(object sender, EventArgs e)
+        {
+            var handler = UpReleasedButtonEvent;
+            if (handler != null) handler();
+        }
+
         public void OnReachedEdgeEvent(object sender, EventArgs e)
         {
             var handler = ReachedEdgeEvent;
@@ -44,6 +51,12 @@ namespace PrgSps2Gr1.Control.Impl
         public void OnDetectedObjectEvent(object sender, EventArgs e)
         {
             var handler = DetectedObjectEvent;
+            if (handler != null) handler();
+        }
+
+        public void OnIdentifiredEnemyEvent(object sender, EventArgs e)
+        {
+            var handler = IdentifiedEnemyEvent;
             if (handler != null) handler();
         }
 
@@ -64,6 +77,11 @@ namespace PrgSps2Gr1.Control.Impl
         }
 
         #region Ev3 Device simulated implementaiton
+
+        public void InitColor()
+        {
+            Logger.Log("InitColor action");
+        }
 
         public void InitSpinScanner()
         {

@@ -1,4 +1,6 @@
-﻿namespace PrgSps2Gr1.State.Normal
+﻿using PrgSps2Gr1.Logging;
+
+namespace PrgSps2Gr1.State.Normal
 {
     class NormalFoundImpl : AState
     {
@@ -6,12 +8,12 @@
 
         protected override void PerformRecurrentAction()
         {
-            // TODO implement found handling
+            // do nothing
         }
 
         protected override void PerformSingleAction()
         {
-            // TODO implement action
+            Logger.Log("Found the enemy!");
         }
 
         public override object[] Debug(object[] args)

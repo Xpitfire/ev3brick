@@ -1,4 +1,5 @@
 ﻿using System;
+using MonoBrickFirmware.Sensors;
 using PrgSps2Gr1.Debug;
 
 namespace PrgSps2Gr1.Control
@@ -9,15 +10,21 @@ namespace PrgSps2Gr1.Control
 
         event Action EnterReleasedButtonEvent;
 
+        event Action UpReleasedButtonEvent;
+
         event Action ReachedEdgeEvent;
 
-        event Action IdentifyObjectEvent;
+        event Action IdentifiedEnemyEvent;
 
         event Action DetectedObjectEvent;
 
-        void InitSpinScanner();
-
+        
         bool HasLostObject();
+
+
+        void InitColor();
+
+        void InitSpinScanner();
         
         void StopAllMovements();
 
@@ -28,6 +35,7 @@ namespace PrgSps2Gr1.Control
         void VehicleStop();
 
         void VehicleReverse(DeviceConstants.TurnDirection turn, sbyte speed, sbyte turnPercent);
+
 
         void WriteLine(string s);
     }

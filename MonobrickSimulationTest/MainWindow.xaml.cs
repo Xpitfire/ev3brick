@@ -75,6 +75,11 @@ namespace MonobrickSimulationTest
         {
             DeviceEv3SimControlImpl.GetInstance().OnDetectedObjectEvent(sender, e);
         }
+
+        private void ButtonIdentifiedEnemy_Click(object sender, RoutedEventArgs e)
+        {
+            DeviceEv3SimControlImpl.GetInstance().OnIdentifiredEnemyEvent(sender, e);
+        }
           
     }
 
