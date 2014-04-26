@@ -41,23 +41,17 @@ namespace PrgSps2Gr1.Control.Impl
         /// </summary>
         public DeviceControlImpl()
         {
-            // start the general sensor monitoring thread
-            var thread = new Thread(SensorMonitorWorkThread);
-            thread.Start();
-            thread = new Thread(ControlSpinScannerThread);
-            thread.Start();
-
-            // init ev3 button events
-            _buttonEvents = new ButtonEvents();
-            _buttonEvents.EscapeReleased += () => OnEscapeReleasedButtonEvent(null, null);
-            _buttonEvents.EnterReleased += () => OnEnterReleasedButtonEvent(null, null);
-            _buttonEvents.UpReleased += () => OnUpReleasedButtonEvent(null, null);
-
             // init motor spinner
             _motorSensorSpinner = new Motor(MotorPort.OutC);
             // init ev3 default settings
             _motorSensorSpinner.ResetTacho();
             UseSpinScanner = true;
+            
+            // init ev3 button events
+            _buttonEvents = new ButtonEvents();
+            _buttonEvents.EscapeReleased += () => OnEscapeReleasedButtonEvent(null, null);
+            _buttonEvents.EnterReleased += () => OnEnterReleasedButtonEvent(null, null);
+            _buttonEvents.UpReleased += () => OnUpReleasedButtonEvent(null, null);
 
             // init motor drive
             _vehicle = new Vehicle(MotorPort.OutA, MotorPort.OutD);
@@ -72,6 +66,13 @@ namespace PrgSps2Gr1.Control.Impl
             // init display
             _lcd = new Lcd();
             _lcd.Clear();
+
+            // start the general sensor monitoring thread
+            var thread = new Thread(SensorMonitorWorkThread);
+            thread.Start();
+            // start motor spinner thread
+            thread = new Thread(ControlSpinScannerThread);
+            thread.Start();
         }
 
         #region Ev3 Events
@@ -129,6 +130,7 @@ namespace PrgSps2Gr1.Control.Impl
 
         public void SpinVehicle()
         {
+            Logger.Log("SpinLeft: speed" + DeviceConstants.Speed.Slower);
             _vehicle.SpinLeft(DeviceConstants.Speed.Slower);
         }
 
@@ -142,16 +144,19 @@ namespace PrgSps2Gr1.Control.Impl
             _vehicle.ReverseRight = false;
             if (speed < 0)
             {
+                Logger.Log("Backward: speed = " + speed);
                 _vehicle.Backward(speed);
             }
             else
             {
+                Logger.Log("Forward: speed = " + speed);
                 _vehicle.Forward(speed);
             }
         }
 
         public void VehicleReverse(DeviceConstants.TurnDirection turn, sbyte speed, sbyte turnPercent)
         {
+            Logger.Log("Turn: speed = " + speed + ", dir = " + turn + ", % = " + turnPercent);
             if (turn == DeviceConstants.TurnDirection.Left)
             {
                 _vehicle.ReverseLeft = true;
@@ -166,13 +171,9 @@ namespace PrgSps2Gr1.Control.Impl
             }
         }
 
-        public void InitSpinScanner()
-        {
-            SpinScannerMaxPlusPos(null, null);
-        }
-
         /// <summary>
         /// Check if a object, which previously has been detected, has disappeared again.
+        /// This method is intended to be used via polling.
         /// </summary>
         /// <returns><c>true</c>, if object is gone, <c>true</c> otherwise <c>false</c>.</returns>
         public bool HasLostObject()
@@ -242,12 +243,12 @@ namespace PrgSps2Gr1.Control.Impl
                 }
 
                 // monitor infrared sensor activity
-                if (_objDetectedChange && _irSensor != null && _irSensor.ReadDistance() < 40)
+                if (_objDetectedChange && _irSensor != null && _irSensor.ReadDistance() < 30)
                 {
                     OnDetectedObjectEvent(null, null);
                     _objDetectedChange = false;
                 }
-                else if (!_objDetectedChange && _irSensor != null && _irSensor.ReadDistance() >= 40)
+                else if (!_objDetectedChange && _irSensor != null && _irSensor.ReadDistance() >= 30)
                 {
                     _objDetectedChange = true;
                 }
@@ -278,30 +279,41 @@ namespace PrgSps2Gr1.Control.Impl
         {
             _oscillationTimer.TickTimeout = Ev3Timer.TickTime.Short;
             _reactivationTimer.TickTimeout = Ev3Timer.TickTime.Long;
+            var initPos = true;
+            // send the spin scanner to the first position
+            
             while (ProgramEv3Sps2Gr1.IsAlive)
             {
                 // control motor spin scanner
-                if (UseSpinScanner)
+                if (UseSpinScanner && _motorSensorSpinner != null)
                 {
 
-                    if (_oscillationTimer.IsTimeout() && _motorSensorSpinner.GetTachoCount() > 30)
+                    if (initPos)
                     {
-                        SpinScannerToMaxMinusPos(null, null);
-                        _reactivationTimer.Reset();
-                    }
-
-                    if (_oscillationTimer.IsTimeout() && _motorSensorSpinner.GetTachoCount() < -30)
-                    {
+                        initPos = false;
                         SpinScannerMaxPlusPos(null, null);
-                        _reactivationTimer.Reset();
                     }
-
-
-                    if (_reactivationTimer.IsTimeout())
+                    else
                     {
-                        SpinScannerToMaxMinusPos(null, null);
-                        _reactivationTimer.Reset();
-                    } 
+                        if (_oscillationTimer.IsTimeout() && _motorSensorSpinner.GetTachoCount() > 30)
+                        {
+                            SpinScannerToMaxMinusPos(null, null);
+                            _reactivationTimer.Reset();
+                        }
+
+                        if (_oscillationTimer.IsTimeout() && _motorSensorSpinner.GetTachoCount() < -30)
+                        {
+                            SpinScannerMaxPlusPos(null, null);
+                            _reactivationTimer.Reset();
+                        }
+
+
+                        if (_reactivationTimer.IsTimeout())
+                        {
+                            SpinScannerToMaxMinusPos(null, null);
+                            _reactivationTimer.Reset();
+                        }
+                    }
                 }
                 else
                 {

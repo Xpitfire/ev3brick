@@ -83,11 +83,6 @@ namespace PrgSps2Gr1.Control.Impl
             Logger.Log("InitColor action");
         }
 
-        public void InitSpinScanner()
-        {
-            Logger.Log("InitSpinScanner action");
-        }
-
         public bool HasLostObject()
         {
             Logger.Log("HasLostObject action not implemented --> true");

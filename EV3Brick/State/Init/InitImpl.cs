@@ -15,7 +15,7 @@ namespace PrgSps2Gr1.State.Init
             Controller = project;
             // set timeout for state change
             StateTimer.TickTimeout = Ev3Timer.TickTime.Short;
-            EventQueue.EnqueueCommand(PerformSingleAction);
+            PerformSingleAction();
         }
 
         protected override void PerformRecurrentAction()
@@ -27,8 +27,6 @@ namespace PrgSps2Gr1.State.Init
         {
             Logger.Log("Color sensor initialization...");
             Ev3.InitColor();
-            //Logger.Log("Start spin scanner");
-            Ev3.InitSpinScanner();
         }
 
         public override object[] Debug(object[] args)

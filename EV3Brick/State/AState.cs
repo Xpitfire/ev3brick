@@ -64,7 +64,7 @@ namespace PrgSps2Gr1.State
 
         private void DetectedObject()
         {
-            if (Controller.ProgramAState != null 
+            if (Controller != null && Controller.ProgramAState != null 
                 && (Controller != null && (Controller.ProgramAState.ToString() != MasterPauseImpl.Name                                                            
                 && Controller.ProgramAState.ToString() != MasterExitImpl.Name
                 && Controller.ProgramAState.ToString() != InitImpl.Name)))
@@ -75,7 +75,7 @@ namespace PrgSps2Gr1.State
 
         private void ReachedEdgeOrObjectDetected()
         {
-            if (Controller.ProgramAState != null 
+            if (Controller != null && Controller.ProgramAState != null 
                 && (Controller != null && (Controller.ProgramAState.ToString() != MasterPauseImpl.Name
                 && Controller.ProgramAState.ToString() != MasterExitImpl.Name
                 && Controller.ProgramAState.ToString() != NormalFoundImpl.Name 
@@ -87,7 +87,7 @@ namespace PrgSps2Gr1.State
 
         private void IdentifiedEnemy()
         {
-            if (Controller.ProgramAState != null 
+            if (Controller != null && Controller.ProgramAState != null 
                 && (Controller != null && (Controller.ProgramAState.ToString() != MasterPauseImpl.Name
                 && Controller.ProgramAState.ToString() != MasterExitImpl.Name
                 && Controller.ProgramAState.ToString() != InitImpl.Name)))

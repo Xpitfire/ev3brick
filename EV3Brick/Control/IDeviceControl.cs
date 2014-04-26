@@ -23,8 +23,6 @@ namespace PrgSps2Gr1.Control
 
 
         void InitColor();
-
-        void InitSpinScanner();
         
         void StopAllMovements();
 

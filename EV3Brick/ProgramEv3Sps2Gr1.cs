@@ -93,8 +93,8 @@ namespace PrgSps2Gr1
             }
             catch (Exception ex)
             {
-                Logger.Log("ERROR: Exception occured!" + ex.Message); 
-                Thread.Sleep(5000); 
+                Logger.Log("ERROR: Exception occured!" + ex.Message);
+                Thread.Sleep(5000);
             }
         }
 
