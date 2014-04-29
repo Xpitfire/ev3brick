@@ -11,7 +11,7 @@ namespace Sps2Gr1.InTeam.State
         private readonly Queue<string> _stateEventQueue = new Queue<string>();
         private readonly Queue<Command> _commandEventQueue = new Queue<Command>();
         private string _lastState;
-        private StateController _controller;
+        private readonly StateController _controller;
 
         public struct StateLevel
         {
@@ -106,6 +106,7 @@ namespace Sps2Gr1.InTeam.State
         /// <param name="a"></param>
         public void EnqueueCommand(Command a)
         {
+            // when using this call the simulation gui freezes --> reason unknown
             if (!Command.Contains(a) && a.GetCommandLevel() <= _controller.CurrentState.GetStateLevel() )
             {
                 Command.Enqueue(a);

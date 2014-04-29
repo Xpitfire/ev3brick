@@ -243,12 +243,12 @@ namespace Sps2Gr1.InTeam.Control.Impl
                 }
 
                 // monitor infrared sensor activity
-                if (_objDetectedChange && _irSensor != null && _irSensor.ReadDistance() < 30)
+                if (_objDetectedChange && _irSensor != null && _irSensor.ReadDistance() < 100)
                 {
                     OnDetectedObjectEvent(null, null);
                     _objDetectedChange = false;
                 }
-                else if (!_objDetectedChange && _irSensor != null && _irSensor.ReadDistance() >= 30)
+                else if (!_objDetectedChange && _irSensor != null && _irSensor.ReadDistance() >= 100)
                 {
                     _objDetectedChange = true;
                 }

@@ -11,7 +11,6 @@ namespace Sps2Gr1.InTeam
     {
         private readonly object _sync = new object();
         private static bool _isAlive = true;
-        private AState _curAState;
 
         #region Global Condition Properties
 
@@ -32,7 +31,7 @@ namespace Sps2Gr1.InTeam
         {
             Logger.Log("Creating new State instance --> initializing...");
             // set first state object
-            _curAState = StateTypeConstants.InitializeStartup(firstState, this);
+            CurrentState = StateTypeConstants.InitializeStartup(firstState, this);
         }
         
         #region Sate Controller
@@ -42,13 +41,9 @@ namespace Sps2Gr1.InTeam
         /// current update sequence.
         /// </summary>
         /// <value>Controller AState.</value>
-        internal AState CurrentState
-        {
-            get { lock (_sync) return _curAState; }
-            set { lock (_sync) _curAState = value; }
-        }
+        internal AState CurrentState { get; set; }
 
-		/// <summary>
+        /// <summary>
 		/// Update the EV3 robot.
 		/// </summary>
         public void Run()
