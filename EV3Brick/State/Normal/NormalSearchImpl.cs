@@ -5,7 +5,7 @@ namespace Sps2Gr1.InTeam.State.Normal
     class NormalSearchImpl : AState
     {
         public const string Name = "NormalSearch";
-        private const EventQueue.StateLevel Level = EventQueue.StateLevel.Level3;
+        private const int Level = EventQueue.StateLevel.Level3;
 
         internal NormalSearchImpl()
         {
@@ -26,7 +26,7 @@ namespace Sps2Gr1.InTeam.State.Normal
             Ev3.SpinVehicle();
         }
 
-        public override EventQueue.StateLevel GetStateLevel()
+        public override int GetStateLevel()
         {
             return Level;
         }

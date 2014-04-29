@@ -7,7 +7,7 @@ namespace Sps2Gr1.InTeam.State.Normal
     class NormalFollowImpl : AState
     {
         public const string Name = "NormalFollow";
-        private const EventQueue.StateLevel Level = EventQueue.StateLevel.Level3;
+        private const int Level = EventQueue.StateLevel.Level3;
 
         internal NormalFollowImpl()
         {
@@ -27,7 +27,7 @@ namespace Sps2Gr1.InTeam.State.Normal
             Ev3.VehicleDrive(DeviceConstants.Speed.Medium);
         }
 
-        public override EventQueue.StateLevel GetStateLevel()
+        public override int GetStateLevel()
         {
             return Level;
         }

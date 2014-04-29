@@ -6,7 +6,7 @@ namespace Sps2Gr1.InTeam.State.Master
     class MasterExitImpl : AState
     {
         public const string Name = "MasterExit";
-        private const EventQueue.StateLevel Level = EventQueue.StateLevel.Level1;
+        private const int Level = EventQueue.StateLevel.Level1;
 
         protected override void PerformRecurrentAction()
         {
@@ -21,7 +21,7 @@ namespace Sps2Gr1.InTeam.State.Master
             StateController.Exit();
         }
 
-        public override EventQueue.StateLevel GetStateLevel()
+        public override int GetStateLevel()
         {
             return Level;
         }

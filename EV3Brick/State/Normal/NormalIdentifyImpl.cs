@@ -5,7 +5,7 @@ namespace Sps2Gr1.InTeam.State.Normal
     class NormalIdentifyImpl : AState
     {
         public const string Name = "NormalIdentify";
-        private const EventQueue.StateLevel Level = EventQueue.StateLevel.Level2;
+        private const int Level = EventQueue.StateLevel.Level2;
 
         internal NormalIdentifyImpl() {
             StateTimer.TickTimeout = Ev3Timer.TickTime.Long;
@@ -24,7 +24,7 @@ namespace Sps2Gr1.InTeam.State.Normal
             Ev3.StopAllMovements();
         }
 
-        public override EventQueue.StateLevel GetStateLevel()
+        public override int GetStateLevel()
         {
             return Level;
         }

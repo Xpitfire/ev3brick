@@ -13,18 +13,18 @@ namespace Sps2Gr1.InTeam.State
         private string _lastState;
         private StateController _controller;
 
-        public enum StateLevel
+        public struct StateLevel
         {
-            Level1,
-            Level2,
-            Level3
+            public const int Level1 = 1;
+            public const int Level2 = 2;
+            public const int Level3 = 3;
         }
 
-        public enum CommandLevel
+        public struct CommandLevel
         {
-            Level1,
-            Level2,
-            Level3
+            public const int Level1 = 1;
+            public const int Level2 = 2;
+            public const int Level3 = 3;
         }
 
         #region State Queue Operations
@@ -106,8 +106,7 @@ namespace Sps2Gr1.InTeam.State
         /// <param name="a"></param>
         public void EnqueueCommand(Command a)
         {
-            // when using this call the simulation gui freezes --> reason unknown
-            if (!Command.Contains(a) /*&& a.GetCommandLevel() >= _controller.CurrentState.GetStateLevel() */)
+            if (!Command.Contains(a) && a.GetCommandLevel() <= _controller.CurrentState.GetStateLevel() )
             {
                 Command.Enqueue(a);
             }

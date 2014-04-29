@@ -8,7 +8,7 @@ namespace Sps2Gr1.InTeam.State.Init
     class InitImpl : AState
     {
         public const string Name = "Init";
-        private const EventQueue.StateLevel Level = EventQueue.StateLevel.Level1;
+        private const int Level = EventQueue.StateLevel.Level1;
 
         internal InitImpl(StateController controller)
         {
@@ -30,7 +30,7 @@ namespace Sps2Gr1.InTeam.State.Init
             Ev3.InitColor();
         }
 
-        public override EventQueue.StateLevel GetStateLevel()
+        public override int GetStateLevel()
         {
             return Level;
         }

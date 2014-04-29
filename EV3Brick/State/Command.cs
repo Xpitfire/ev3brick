@@ -10,15 +10,15 @@ namespace Sps2Gr1.InTeam.State
     {
         private Action _action;
 
-        private EventQueue.StateLevel _level;
+        private int _level;
 
 
-        public void SetCommandLevel(EventQueue.StateLevel level)
+        public void SetCommandLevel(int level)
         {
             _level = level;
         }
 
-        public EventQueue.StateLevel GetCommandLevel()
+        public int GetCommandLevel()
         {
             return _level;
         }

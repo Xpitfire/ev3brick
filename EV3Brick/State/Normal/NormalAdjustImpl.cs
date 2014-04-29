@@ -6,7 +6,7 @@ namespace Sps2Gr1.InTeam.State.Normal
     class NormalAdjustImpl : AState
     {
         public const string Name = "NormalAdjust";
-        private const EventQueue.StateLevel Level = EventQueue.StateLevel.Level3;
+        private const int Level = EventQueue.StateLevel.Level3;
 
         internal NormalAdjustImpl() {
             StateTimer.TickTimeout = Ev3Timer.TickTime.Long;
@@ -25,7 +25,7 @@ namespace Sps2Gr1.InTeam.State.Normal
             Ev3.VehicleDrive(DeviceConstants.Speed.Slowest);
         }
 
-        public override EventQueue.StateLevel GetStateLevel()
+        public override int GetStateLevel()
         {
             return Level;
         }

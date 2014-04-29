@@ -3,7 +3,7 @@
     class MasterPauseImpl : AState
     {
         public const string Name = "MasterPause";
-        private const EventQueue.StateLevel Level = EventQueue.StateLevel.Level1;
+        private const int Level = EventQueue.StateLevel.Level1;
         private static bool _inPause = false;
 
         protected override void PerformRecurrentAction()
@@ -28,7 +28,7 @@
             }
         }
 
-        public override EventQueue.StateLevel GetStateLevel()
+        public override int GetStateLevel()
         {
             return Level;
         }

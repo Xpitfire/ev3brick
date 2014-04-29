@@ -6,7 +6,7 @@ namespace Sps2Gr1.InTeam.State.Normal
     class NormalFoundImpl : AState
     {
         public const string Name = "NormalFound";
-        private const EventQueue.StateLevel Level = EventQueue.StateLevel.Level2;
+        private const int Level = EventQueue.StateLevel.Level2;
 
         protected override void PerformRecurrentAction()
         {
@@ -18,7 +18,7 @@ namespace Sps2Gr1.InTeam.State.Normal
             Logger.Log("Found the enemy!");
         }
 
-        public override EventQueue.StateLevel GetStateLevel()
+        public override int GetStateLevel()
         {
             return Level;
         }

@@ -140,7 +140,7 @@ namespace Sps2Gr1.InTeam.State
         /// Returns the state level of the current state.
         /// </summary>
         /// <returns></returns>
-        public abstract EventQueue.StateLevel GetStateLevel();
+        public abstract int GetStateLevel();
         
         /// <summary>
         /// Sets a new AState instance to the controller. Also the old state of the controller will be added

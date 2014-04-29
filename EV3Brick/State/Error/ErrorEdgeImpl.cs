@@ -8,7 +8,7 @@ namespace Sps2Gr1.InTeam.State.Error
     class ErrorEdgeImpl : AState
     {
         public const string Name = "ErrorEdge";
-        private const EventQueue.StateLevel Level = EventQueue.StateLevel.Level2;
+        private const int Level = EventQueue.StateLevel.Level2;
 
         internal ErrorEdgeImpl()
         {
@@ -29,7 +29,7 @@ namespace Sps2Gr1.InTeam.State.Error
             Ev3.VehicleReverse(DeviceConstants.TurnDirection.Left, DeviceConstants.Speed.Slower, 90);
         }
 
-        public override EventQueue.StateLevel GetStateLevel()
+        public override int GetStateLevel()
         {
             return Level;
         }
