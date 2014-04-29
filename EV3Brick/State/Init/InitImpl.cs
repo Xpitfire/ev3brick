@@ -1,18 +1,18 @@
 ﻿using System;
-using PrgSps2Gr1.Logging;
-using PrgSps2Gr1.State.Normal;
-using PrgSps2Gr1.Utility;
+using Sps2Gr1.InTeam.State.Normal;
+using Sps2Gr1.InTeam.Logging;
+using Sps2Gr1.InTeam.Utility;
 
-namespace PrgSps2Gr1.State.Init
+namespace Sps2Gr1.InTeam.State.Init
 {
     class InitImpl : AState
     {
         public const string Name = "Init";
 
-        internal InitImpl(ProgramEv3Sps2Gr1 project)
+        internal InitImpl(StateController controller)
         {
             // set the abstract state controller instance
-            Controller = project;
+            Controller = controller;
             // set timeout for state change
             StateTimer.TickTimeout = Ev3Timer.TickTime.Short;
             PerformSingleAction();

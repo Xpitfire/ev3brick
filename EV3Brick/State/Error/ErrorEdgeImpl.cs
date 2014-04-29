@@ -1,9 +1,9 @@
 ﻿using System;
-using PrgSps2Gr1.Control;
-using PrgSps2Gr1.State.Normal;
-using PrgSps2Gr1.Utility;
+using Sps2Gr1.InTeam.Control;
+using Sps2Gr1.InTeam.State.Normal;
+using Sps2Gr1.InTeam.Utility;
 
-namespace PrgSps2Gr1.State.Error
+namespace Sps2Gr1.InTeam.State.Error
 {
     class ErrorEdgeImpl : AState
     {

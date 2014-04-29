@@ -1,7 +1,7 @@
-﻿using PrgSps2Gr1.Control;
-using PrgSps2Gr1.Utility;
+﻿using Sps2Gr1.InTeam.Control;
+using Sps2Gr1.InTeam.Utility;
 
-namespace PrgSps2Gr1.State.Normal
+namespace Sps2Gr1.InTeam.State.Normal
 {
     class NormalAdjustImpl : AState
     {

@@ -1,6 +1,7 @@
-﻿using PrgSps2Gr1.Logging;
+﻿using Sps2Gr1.InTeam.Logging;
+using Sps2Gr1.InTeam.State;
 
-namespace PrgSps2Gr1.State.Normal
+namespace Sps2Gr1.InTeam.State.Normal
 {
     class NormalFoundImpl : AState
     {

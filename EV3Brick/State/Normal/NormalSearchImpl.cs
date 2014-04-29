@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace PrgSps2Gr1.State.Normal
+namespace Sps2Gr1.InTeam.State.Normal
 {
     class NormalSearchImpl : AState
     {

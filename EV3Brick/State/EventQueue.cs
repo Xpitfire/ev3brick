@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using PrgSps2Gr1.Logging;
+using Sps2Gr1.InTeam.Logging;
 
-namespace PrgSps2Gr1.State
+namespace Sps2Gr1.InTeam.State
 {
     class EventQueue
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PrgSps2Gr1.Utility
+namespace Sps2Gr1.InTeam.Utility
 {
     public class Ev3Timer
     {

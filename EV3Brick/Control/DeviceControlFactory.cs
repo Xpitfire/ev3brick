@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PrgSps2Gr1.Control.Impl;
+﻿using Sps2Gr1.InTeam.Control.Impl;
 
-namespace PrgSps2Gr1.Control
+namespace Sps2Gr1.InTeam.Control
 {
     public class DeviceControlFactory
     {
@@ -15,7 +10,7 @@ namespace PrgSps2Gr1.Control
 
         /// <summary>
         /// Returns an IDeviceControl instance depending on the debug flag
-        /// in the <code>ProgramEv3Sps2Gr1</code> class.
+        /// in the <code>StateController</code> class.
         /// It can variate between an simulation instance and the real-time
         /// Ev3 Firmware control implementation.
         /// </summary>
@@ -23,7 +18,7 @@ namespace PrgSps2Gr1.Control
         {
             get
             {
-                if (ProgramEv3Sps2Gr1.IsDebug)
+                if (StateController.IsDebug)
                     return _ev3 ?? (_ev3 = DeviceEv3SimControlImpl.GetInstance());
                 else
                     return _ev3 ?? (_ev3 = new DeviceControlImpl());

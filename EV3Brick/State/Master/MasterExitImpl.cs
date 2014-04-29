@@ -1,7 +1,7 @@
 ﻿using System;
-using PrgSps2Gr1.Logging;
+using Sps2Gr1.InTeam.Logging;
 
-namespace PrgSps2Gr1.State.Master
+namespace Sps2Gr1.InTeam.State.Master
 {
     class MasterExitImpl : AState
     {
@@ -17,7 +17,7 @@ namespace PrgSps2Gr1.State.Master
             Logger.Log("Stopping motors");
             Ev3.StopAllMovements();
             Logger.Log("Exiting application...");
-            ProgramEv3Sps2Gr1.Exit();
+            StateController.Exit();
         }
 
         public override object[] Debug(object[] args)

@@ -1,6 +1,6 @@
-﻿using PrgSps2Gr1.Control;
+﻿using Sps2Gr1.InTeam.Control;
 
-namespace PrgSps2Gr1.Logging
+namespace Sps2Gr1.InTeam.Logging
 {
     public class Logger
     {

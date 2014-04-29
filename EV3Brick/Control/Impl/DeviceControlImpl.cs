@@ -4,10 +4,10 @@ using MonoBrickFirmware.Display;
 using MonoBrickFirmware.Movement;
 using MonoBrickFirmware.Sensors;
 using MonoBrickFirmware.UserInput;
-using PrgSps2Gr1.Logging;
-using PrgSps2Gr1.Utility;
+using Sps2Gr1.InTeam.Logging;
+using Sps2Gr1.InTeam.Utility;
 
-namespace PrgSps2Gr1.Control.Impl
+namespace Sps2Gr1.InTeam.Control.Impl
 {
     public class DeviceControlImpl : IDeviceControl
     {
@@ -229,7 +229,7 @@ namespace PrgSps2Gr1.Control.Impl
         public void SensorMonitorWorkThread()
         {
             var touchSensorChange = true;
-            while (ProgramEv3Sps2Gr1.IsAlive)
+            while (StateController.IsAlive)
             {
                 // monitor touch sensor activity
 				if (touchSensorChange && _touchSensor != null && _touchSensor.IsPressed())
@@ -282,7 +282,7 @@ namespace PrgSps2Gr1.Control.Impl
             var initPos = true;
             // send the spin scanner to the first position
             
-            while (ProgramEv3Sps2Gr1.IsAlive)
+            while (StateController.IsAlive)
             {
                 // control motor spin scanner
                 if (UseSpinScanner && _motorSensorSpinner != null)

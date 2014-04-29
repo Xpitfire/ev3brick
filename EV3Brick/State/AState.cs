@@ -1,17 +1,16 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
-using PrgSps2Gr1.Control;
-using PrgSps2Gr1.Control.Impl;
-using PrgSps2Gr1.Debug;
-using PrgSps2Gr1.Logging;
-using PrgSps2Gr1.State.Error;
-using PrgSps2Gr1.State.Init;
-using PrgSps2Gr1.State.Master;
-using PrgSps2Gr1.State.Normal;
-using PrgSps2Gr1.Utility;
+using Sps2Gr1.InTeam.Debug;
+using Sps2Gr1.InTeam.Control;
+using Sps2Gr1.InTeam.State.Init;
+using Sps2Gr1.InTeam.State.Master;
+using Sps2Gr1.InTeam.State.Normal;
+using Sps2Gr1.InTeam.Logging;
+using Sps2Gr1.InTeam.State.Error;
+using Sps2Gr1.InTeam.Utility;
 
-namespace PrgSps2Gr1.State
+namespace Sps2Gr1.InTeam.State
 {
     abstract class AState : IDebug
     {
@@ -23,7 +22,7 @@ namespace PrgSps2Gr1.State
         /// <summary>
         /// Controller instance, which holds the current operated state.
         /// </summary>
-        private static ProgramEv3Sps2Gr1 _controller;
+        private static StateController _controller;
 
         #region Inheritable Properties
 
@@ -35,7 +34,7 @@ namespace PrgSps2Gr1.State
         /// <summary>
         /// The program controller with the current used AState instance.
         /// </summary>
-        protected ProgramEv3Sps2Gr1 Controller
+        protected StateController Controller
         {
             set
             {
@@ -64,10 +63,10 @@ namespace PrgSps2Gr1.State
 
         private void DetectedObject()
         {
-            if (Controller != null && Controller.ProgramAState != null 
-                && (Controller != null && (Controller.ProgramAState.ToString() != MasterPauseImpl.Name                                                            
-                && Controller.ProgramAState.ToString() != MasterExitImpl.Name
-                && Controller.ProgramAState.ToString() != InitImpl.Name)))
+            if (Controller != null && Controller.CurrentState != null 
+                && (Controller != null && (Controller.CurrentState.ToString() != MasterPauseImpl.Name                                                            
+                && Controller.CurrentState.ToString() != MasterExitImpl.Name
+                && Controller.CurrentState.ToString() != InitImpl.Name)))
             {
                 EventQueue.EnqueueState(NormalFollowImpl.Name);
             }
@@ -75,11 +74,11 @@ namespace PrgSps2Gr1.State
 
         private void ReachedEdgeOrObjectDetected()
         {
-            if (Controller != null && Controller.ProgramAState != null 
-                && (Controller != null && (Controller.ProgramAState.ToString() != MasterPauseImpl.Name
-                && Controller.ProgramAState.ToString() != MasterExitImpl.Name
-                && Controller.ProgramAState.ToString() != NormalFoundImpl.Name 
-                && Controller.ProgramAState.ToString() != InitImpl.Name)))
+            if (Controller != null && Controller.CurrentState != null 
+                && (Controller != null && (Controller.CurrentState.ToString() != MasterPauseImpl.Name
+                && Controller.CurrentState.ToString() != MasterExitImpl.Name
+                && Controller.CurrentState.ToString() != NormalFoundImpl.Name 
+                && Controller.CurrentState.ToString() != InitImpl.Name)))
             {
                 EventQueue.EnqueueState(Ev3.HasLostObject() ? ErrorEdgeImpl.Name : NormalIdentifyImpl.Name);
             }
@@ -87,10 +86,10 @@ namespace PrgSps2Gr1.State
 
         private void IdentifiedEnemy()
         {
-            if (Controller != null && Controller.ProgramAState != null 
-                && (Controller != null && (Controller.ProgramAState.ToString() != MasterPauseImpl.Name
-                && Controller.ProgramAState.ToString() != MasterExitImpl.Name
-                && Controller.ProgramAState.ToString() != InitImpl.Name)))
+            if (Controller != null && Controller.CurrentState != null 
+                && (Controller != null && (Controller.CurrentState.ToString() != MasterPauseImpl.Name
+                && Controller.CurrentState.ToString() != MasterExitImpl.Name
+                && Controller.CurrentState.ToString() != InitImpl.Name)))
             {
                 EventQueue.EnqueueState(NormalFoundImpl.Name);
             }
@@ -124,10 +123,10 @@ namespace PrgSps2Gr1.State
                 return;
             }
             // save current state to EventQueue.LastState only if the new state is a different one
-            if (_controller != null && _controller.ProgramAState != null &&
-                (EventQueue.LastState == null || (EventQueue.LastState != _controller.ProgramAState.ToString())))
+            if (_controller != null && _controller.CurrentState != null &&
+                (EventQueue.LastState == null || (EventQueue.LastState != _controller.CurrentState.ToString())))
             {
-                EventQueue.LastState = _controller.ProgramAState.ToString();
+                EventQueue.LastState = _controller.CurrentState.ToString();
             }
             // set new state to the controller
             if (_controller == null)
@@ -135,7 +134,7 @@ namespace PrgSps2Gr1.State
                 throw new Exception("Invalid state behavior!");
             }
             Logger.Log("StateChanged: " + newAState);
-            _controller.ProgramAState = newAState;
+            _controller.CurrentState = newAState;
         }
 
         /// <summary>
@@ -170,35 +169,9 @@ namespace PrgSps2Gr1.State
 
             // set the next AState by converting the AState name queue entry
             var stateName = EventQueue.DequeueState();
-            AState aState = null;
-            // convert the state name (string) to a new state object
-            switch (stateName)
-            {
-                case ErrorEdgeImpl.Name:
-                    aState = new ErrorEdgeImpl();
-                    break;
-                case MasterExitImpl.Name:
-                    aState = new MasterExitImpl();
-                    break;
-                case MasterPauseImpl.Name:
-                    aState = new MasterPauseImpl();
-                    break;
-                case NormalAdjustImpl.Name:
-                    aState = new NormalAdjustImpl();
-                    break;
-                case NormalFollowImpl.Name:
-                    aState = new NormalFollowImpl();
-                    break;
-                case NormalFoundImpl.Name:
-                    aState = new NormalFoundImpl();
-                    break;
-                case NormalIdentifyImpl.Name:
-                    aState = new NormalIdentifyImpl();
-                    break;
-                case NormalSearchImpl.Name:
-                    aState = new NormalSearchImpl();
-                    break;
-            }
+            // convert state name to a state object
+            var aState = StateTypeConstants.ConvertState(stateName);
+
             // set the new state to the controller
             SetState(aState);
             // invoke the single action after state change

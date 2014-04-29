@@ -1,4 +1,4 @@
-﻿<Window x:Name="Ev3SimulationMain" x:Class="MonobrickSimulationTest.MainWindow"
+﻿<Window x:Name="Ev3SimulationMain" x:Class="SpsGr1.InTeam.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Closing="ProgramClosing"

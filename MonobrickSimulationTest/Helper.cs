@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace MonobrickSimulationTest
+namespace SpsGr1.InTeam
 {
     public class Helper
     {

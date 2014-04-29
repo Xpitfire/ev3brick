@@ -1,7 +1,7 @@
 ﻿using System;
-using PrgSps2Gr1.Logging;
+using Sps2Gr1.InTeam.Logging;
 
-namespace PrgSps2Gr1.Control.Impl
+namespace Sps2Gr1.InTeam.Control.Impl
 {
     public class DeviceEv3SimControlImpl : IDeviceControl
     {

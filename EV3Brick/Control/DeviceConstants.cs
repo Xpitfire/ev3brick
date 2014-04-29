@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PrgSps2Gr1.Control
+namespace Sps2Gr1.InTeam.Control
 {
     public class DeviceConstants
     {

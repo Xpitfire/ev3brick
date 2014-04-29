@@ -1,6 +1,4 @@
-﻿using PrgSps2Gr1.Logging;
-
-namespace PrgSps2Gr1.State.Master
+﻿namespace Sps2Gr1.InTeam.State.Master
 {
     class MasterPauseImpl : AState
     {

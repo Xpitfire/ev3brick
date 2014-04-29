@@ -1,8 +1,8 @@
 ﻿using System;
 using MonoBrickFirmware.Sensors;
-using PrgSps2Gr1.Debug;
+using Sps2Gr1.InTeam.Debug;
 
-namespace PrgSps2Gr1.Control
+namespace Sps2Gr1.InTeam.Control
 {
     public interface IDeviceControl : IDebug
     {

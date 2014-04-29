@@ -2,12 +2,11 @@
 using System.ComponentModel;
 using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Threading;
-using PrgSps2Gr1;
-using PrgSps2Gr1.Control.Impl;
+using Sps2Gr1.InTeam;
+using Sps2Gr1.InTeam.Control.Impl;
 
-namespace MonobrickSimulationTest
+namespace SpsGr1.InTeam
 {
     /// <summary>
     /// Interaktionslogik für MainWindow.xaml
@@ -25,15 +24,15 @@ namespace MonobrickSimulationTest
         {
             new Thread(() =>
                 {
-                    ProgramEv3Sps2Gr1.IsDebug = true;
-                    var prg = new ProgramEv3Sps2Gr1();
+                    StateController.IsDebug = true;
+                    var prg = new StateController("Init");
                     prg.Run();
                 }).Start();
         }
 
         public void UpdateView()
         {
-            while (ProgramEv3Sps2Gr1.IsAlive)
+            while (StateController.IsAlive)
             {
                 if (!Dispatcher.CheckAccess())
                 {
@@ -52,7 +51,7 @@ namespace MonobrickSimulationTest
 
         private void ProgramClosing(object sender, CancelEventArgs e)
         {
-            ProgramEv3Sps2Gr1.IsAlive = false;
+            StateController.IsAlive = false;
             Environment.Exit(0);
         }
 
