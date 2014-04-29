@@ -6,23 +6,38 @@ namespace Sps2Gr1.InTeam.State
 {
     class EventQueue
     {
-        private static readonly object SyncState = new object();
-        private static readonly object SyncCommand = new object();
-        private static readonly Queue<string> StateEventQueue = new Queue<string>();
-		private static readonly Queue<Action> CommandEventQueue = new Queue<Action>();
-        private static string _lastState;
+        private readonly object _syncState = new object();
+        private readonly object _syncCommand = new object();
+        private readonly Queue<string> _stateEventQueue = new Queue<string>();
+        private readonly Queue<Command> _commandEventQueue = new Queue<Command>();
+        private string _lastState;
+        private StateController _controller;
+
+        public enum StateLevel
+        {
+            Level1,
+            Level2,
+            Level3
+        }
+
+        public enum CommandLevel
+        {
+            Level1,
+            Level2,
+            Level3
+        }
 
         #region State Queue Operations
 
         /// <summary>
         /// Access thread save to a queue instance.
         /// </summary>
-        private static Queue<string> State
+        private Queue<string> State
         {
             get {
-                lock (SyncState)
+                lock (_syncState)
                 {
-                    return StateEventQueue;
+                    return _stateEventQueue;
                 }
             }
         }
@@ -31,7 +46,7 @@ namespace Sps2Gr1.InTeam.State
         /// Enques a state only if the queue does not contain this it.
         /// </summary>
         /// <param name="s"></param>
-        public static void EnqueueState(string s)
+        public void EnqueueState(string s)
         {
             if (!State.Contains(s))
             {
@@ -39,7 +54,7 @@ namespace Sps2Gr1.InTeam.State
             }
         }
 
-        public static string DequeueState()
+        public string DequeueState()
         {
             return State.Dequeue();
         }
@@ -48,7 +63,7 @@ namespace Sps2Gr1.InTeam.State
         /// Return the number of elements in the state queue.
         /// </summary>
         /// <returns></returns>
-        public static int GetStateCount()
+        public int GetStateCount()
         {
             return State.Count;
         }
@@ -56,26 +71,31 @@ namespace Sps2Gr1.InTeam.State
         /// <summary>
         /// Returns the last operated state.
         /// </summary>
-        internal static string LastState
+        internal string LastState
         {
-            get { lock (SyncState) { return _lastState; } }
-            set { lock (SyncState) { _lastState = value; } }
+            get { lock (_syncState) { return _lastState; } }
+            set { lock (_syncState) { _lastState = value; } }
         }
 
         #endregion
+
+        public EventQueue(StateController controller)
+        {
+            _controller = controller;
+        }
 
         #region Command Queue Operations
 
         /// <summary>
         /// Access thread save to a queue instance.
         /// </summary>
-        private static Queue<Action> Command
+        private Queue<Command> Command
         {
             get
             {
-                lock (SyncCommand)
+                lock (_syncCommand)
                 {
-                    return CommandEventQueue;
+                    return _commandEventQueue;
                 }
             }
         }
@@ -84,15 +104,16 @@ namespace Sps2Gr1.InTeam.State
         /// Enqueues an action if the queue does not already contain it.
         /// </summary>
         /// <param name="a"></param>
-        public static void EnqueueCommand(Action a)
+        public void EnqueueCommand(Command a)
         {
-            if (!Command.Contains(a))
+            // when using this call the simulation gui freezes --> reason unknown
+            if (!Command.Contains(a) /*&& a.GetCommandLevel() >= _controller.CurrentState.GetStateLevel() */)
             {
                 Command.Enqueue(a);
             }
         }
 
-        public static Action DequeueCommand()
+        public Command DequeueCommand()
         {
             return Command.Dequeue();
         }
@@ -100,7 +121,7 @@ namespace Sps2Gr1.InTeam.State
         /// <summary>
         /// Remove all elements from the command queue.
         /// </summary>
-        public static void ClearCommandQueue()
+        public void ClearCommandQueue()
         {
             if (Command.Count > 0)
             {
@@ -112,7 +133,7 @@ namespace Sps2Gr1.InTeam.State
         /// Return the number of elements in the state queue.
         /// </summary>
         /// <returns></returns>
-        public static int GetCommandCount()
+        public int GetCommandCount()
         {
             return Command.Count;
         }

@@ -8,6 +8,7 @@ namespace Sps2Gr1.InTeam.State.Init
     class InitImpl : AState
     {
         public const string Name = "Init";
+        private const EventQueue.StateLevel Level = EventQueue.StateLevel.Level1;
 
         internal InitImpl(StateController controller)
         {
@@ -27,6 +28,11 @@ namespace Sps2Gr1.InTeam.State.Init
         {
             Logger.Log("Color sensor initialization...");
             Ev3.InitColor();
+        }
+
+        public override EventQueue.StateLevel GetStateLevel()
+        {
+            return Level;
         }
 
         public override object[] Debug(object[] args)

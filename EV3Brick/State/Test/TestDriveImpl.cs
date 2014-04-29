@@ -6,6 +6,7 @@ namespace Sps2Gr1.InTeam.State.Test
     class TestDriveImpl : AState
     {
         public const string Name = "TestDrive";
+        private const EventQueue.StateLevel Level = EventQueue.StateLevel.Level2;
 
         public TestDriveImpl(StateController controller)
         {
@@ -20,6 +21,11 @@ namespace Sps2Gr1.InTeam.State.Test
 
         protected override void PerformSingleAction()
         {
+        }
+
+        public override EventQueue.StateLevel GetStateLevel()
+        {
+            return Level;
         }
 
         public override object[] Debug(object[] args)

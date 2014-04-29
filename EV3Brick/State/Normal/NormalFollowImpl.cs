@@ -7,6 +7,7 @@ namespace Sps2Gr1.InTeam.State.Normal
     class NormalFollowImpl : AState
     {
         public const string Name = "NormalFollow";
+        private const EventQueue.StateLevel Level = EventQueue.StateLevel.Level3;
 
         internal NormalFollowImpl()
         {
@@ -17,13 +18,18 @@ namespace Sps2Gr1.InTeam.State.Normal
         {
             if (StateTimer.IsTimeout() && Ev3.HasLostObject())
             {
-                EventQueue.EnqueueState(NormalSearchImpl.Name);
+                StateEventQueue.EnqueueState(NormalSearchImpl.Name);
             }
         }
 
         protected override void PerformSingleAction()
         {
             Ev3.VehicleDrive(DeviceConstants.Speed.Medium);
+        }
+
+        public override EventQueue.StateLevel GetStateLevel()
+        {
+            return Level;
         }
 
         public override object[] Debug(object[] args)

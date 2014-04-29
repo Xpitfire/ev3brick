@@ -24,11 +24,22 @@ namespace Sps2Gr1.InTeam.State
         /// </summary>
         private static StateController _controller;
 
+        /// <summary>
+        /// The default state event queue to process commands and state changes.
+        /// </summary>
+        private static EventQueue _eventQueue;
+
+
         #region Inheritable Properties
 
         protected IDeviceControl Ev3
         {
             get { return DeviceControlFactory.Ev3Control; }
+        }
+
+        protected EventQueue StateEventQueue
+        {
+            get { return _eventQueue ?? (_eventQueue = new EventQueue(_controller)); }
         }
 
         /// <summary>
@@ -53,46 +64,60 @@ namespace Sps2Gr1.InTeam.State
         protected AState()
         {
             // add anonymous method action to event queue
-            Ev3.EscapeReleasedButtonEvent += () => EventQueue.EnqueueState(MasterExitImpl.Name);
-            Ev3.EnterReleasedButtonEvent += () => EventQueue.EnqueueState(MasterPauseImpl.Name);
-            Ev3.UpReleasedButtonEvent += () => EventQueue.EnqueueState(NormalSearchImpl.Name);
+            Ev3.EscapeReleasedButtonEvent += EscapeButton;
+            Ev3.EnterReleasedButtonEvent += EnterButton;
+            Ev3.UpReleasedButtonEvent += UpButton;
             Ev3.ReachedEdgeEvent += ReachedEdgeOrObjectDetected;
             Ev3.IdentifiedEnemyEvent += IdentifiedEnemy;
             Ev3.DetectedObjectEvent += DetectedObject;
         }
 
+        private void EscapeButton()
+        {
+            var cmd = new Command();
+            cmd.SetAction(() => StateEventQueue.EnqueueState(MasterExitImpl.Name));
+            cmd.SetCommandLevel(EventQueue.StateLevel.Level1);
+            StateEventQueue.EnqueueCommand(cmd);
+        }
+
+        private void EnterButton()
+        {
+            var cmd = new Command();
+            cmd.SetAction(() => StateEventQueue.EnqueueState(MasterPauseImpl.Name));
+            cmd.SetCommandLevel(EventQueue.StateLevel.Level1);
+            StateEventQueue.EnqueueCommand(cmd);
+        }
+
+        private void UpButton()
+        {
+            var cmd = new Command();
+            cmd.SetAction(() => StateEventQueue.EnqueueState(NormalSearchImpl.Name));
+            cmd.SetCommandLevel(EventQueue.StateLevel.Level1);
+            StateEventQueue.EnqueueCommand(cmd);
+        }
+
         private void DetectedObject()
         {
-            if (Controller != null && Controller.CurrentState != null 
-                && (Controller != null && (Controller.CurrentState.ToString() != MasterPauseImpl.Name                                                            
-                && Controller.CurrentState.ToString() != MasterExitImpl.Name
-                && Controller.CurrentState.ToString() != InitImpl.Name)))
-            {
-                EventQueue.EnqueueState(NormalFollowImpl.Name);
-            }
+            var cmd = new Command();
+            cmd.SetAction(() => StateEventQueue.EnqueueState(NormalFollowImpl.Name));
+            cmd.SetCommandLevel(EventQueue.StateLevel.Level3);
+            StateEventQueue.EnqueueCommand(cmd);
         }
 
         private void ReachedEdgeOrObjectDetected()
         {
-            if (Controller != null && Controller.CurrentState != null 
-                && (Controller != null && (Controller.CurrentState.ToString() != MasterPauseImpl.Name
-                && Controller.CurrentState.ToString() != MasterExitImpl.Name
-                && Controller.CurrentState.ToString() != NormalFoundImpl.Name 
-                && Controller.CurrentState.ToString() != InitImpl.Name)))
-            {
-                EventQueue.EnqueueState(Ev3.HasLostObject() ? ErrorEdgeImpl.Name : NormalIdentifyImpl.Name);
-            }
+            var cmd = new Command();
+            cmd.SetAction(() => StateEventQueue.EnqueueState(Ev3.HasLostObject() ? ErrorEdgeImpl.Name : NormalIdentifyImpl.Name));
+            cmd.SetCommandLevel(EventQueue.StateLevel.Level3);
+            StateEventQueue.EnqueueCommand(cmd);
         }
 
         private void IdentifiedEnemy()
         {
-            if (Controller != null && Controller.CurrentState != null 
-                && (Controller != null && (Controller.CurrentState.ToString() != MasterPauseImpl.Name
-                && Controller.CurrentState.ToString() != MasterExitImpl.Name
-                && Controller.CurrentState.ToString() != InitImpl.Name)))
-            {
-                EventQueue.EnqueueState(NormalFoundImpl.Name);
-            }
+            var cmd = new Command();
+            cmd.SetAction(() => StateEventQueue.EnqueueState(NormalFoundImpl.Name));
+            cmd.SetCommandLevel(EventQueue.StateLevel.Level3);
+            StateEventQueue.EnqueueCommand(cmd);
         }
 
         #region State Update Methods
@@ -112,6 +137,12 @@ namespace Sps2Gr1.InTeam.State
         protected abstract void PerformSingleAction();
 
         /// <summary>
+        /// Returns the state level of the current state.
+        /// </summary>
+        /// <returns></returns>
+        public abstract EventQueue.StateLevel GetStateLevel();
+        
+        /// <summary>
         /// Sets a new AState instance to the controller. Also the old state of the controller will be added
         /// to the <code>LastState</code> object, if the new state differes from the old one.
         /// </summary>
@@ -122,11 +153,11 @@ namespace Sps2Gr1.InTeam.State
             {
                 return;
             }
-            // save current state to EventQueue.LastState only if the new state is a different one
+            // save current state to StateEventQueue.LastState only if the new state is a different one
             if (_controller != null && _controller.CurrentState != null &&
-                (EventQueue.LastState == null || (EventQueue.LastState != _controller.CurrentState.ToString())))
+                (StateEventQueue.LastState == null || (StateEventQueue.LastState != _controller.CurrentState.ToString())))
             {
-                EventQueue.LastState = _controller.CurrentState.ToString();
+                StateEventQueue.LastState = _controller.CurrentState.ToString();
             }
             // set new state to the controller
             if (_controller == null)
@@ -148,11 +179,11 @@ namespace Sps2Gr1.InTeam.State
         public void Update()
         {
 			// dequeue events from a primary event queue until it's empty and then check the secondary and tertiary
-			while (EventQueue.GetStateCount() <= 0) 
+			while (StateEventQueue.GetStateCount() <= 0) 
 			{
-                if (EventQueue.GetCommandCount() > 0)
+                if (StateEventQueue.GetCommandCount() > 0)
                 {
-                    EventQueue.DequeueCommand()();
+                    StateEventQueue.DequeueCommand().PerformAction();
                 }
                 Thread.Sleep(100);
                 // perform sub-class default action
@@ -160,22 +191,21 @@ namespace Sps2Gr1.InTeam.State
 			}
 
             // if the state queue is empty return
-            if (EventQueue.GetStateCount() <= 0)
+            if (StateEventQueue.GetStateCount() <= 0)
             {
                 return;
             }
             // clear previous commands from the command queue
-            EventQueue.ClearCommandQueue();
+            StateEventQueue.ClearCommandQueue();
 
             // set the next AState by converting the AState name queue entry
-            var stateName = EventQueue.DequeueState();
+            var stateName = StateEventQueue.DequeueState();
             // convert state name to a state object
             var aState = StateTypeConstants.ConvertState(stateName);
 
             // set the new state to the controller
             SetState(aState);
             // invoke the single action after state change
-            System.Diagnostics.Debug.Assert(aState != null, "aState != null");
             aState.PerformSingleAction();
         }
 

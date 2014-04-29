@@ -48,6 +48,7 @@
     <Compile Include="CuntMain.cs" />
     <Compile Include="Debug\IDebug.cs" />
     <Compile Include="Control\IDeviceControl.cs" />
+    <Compile Include="State\Command.cs" />
     <Compile Include="State\Error\ErrorEdgeImpl.cs" />
     <Compile Include="State\EventQueue.cs" />
     <Compile Include="State\Normal\NormalFoundImpl.cs" />
