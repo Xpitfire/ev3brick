@@ -194,9 +194,9 @@ namespace Sps2Gr1.InTeam.Control.Impl
             return _objDetectedChange;
         }
 
-        public void PlaySound()
+        public void PlaySound(ushort kHz, ushort duration, int volume)
         {
-            _speaker.Beep();
+            _speaker.PlayTone(kHz, duration, volume);
         }
 
         /// <summary>

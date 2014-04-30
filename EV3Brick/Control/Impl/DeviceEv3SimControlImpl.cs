@@ -78,7 +78,7 @@ namespace Sps2Gr1.InTeam.Control.Impl
 
         #region Ev3 Device simulated implementaiton
 
-        public void PlaySound()
+        public void PlaySound(ushort kHz, ushort duration, int volume)
         {
             throw new NotImplementedException();
         }

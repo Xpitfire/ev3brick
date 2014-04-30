@@ -129,7 +129,7 @@ namespace Sps2Gr1.InTeam.State
             cmd.SetCommandLevel(EventQueue.StateLevel.Level3);
             StateEventQueue.EnqueueCommand(cmd);
             var cmd2 = new Command();
-            cmd2.SetAction(() => Ev3.PlaySound());
+            //cmd2.SetAction(() => Ev3.PlaySound());
             cmd2.SetCommandLevel(EventQueue.StateLevel.Level1);
             StateEventQueue.EnqueueCommand(cmd2);
         }

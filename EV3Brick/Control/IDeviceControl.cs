@@ -22,7 +22,7 @@ namespace Sps2Gr1.InTeam.Control
         bool HasLostObject();
 
 
-        void PlaySound();
+        void PlaySound(ushort kHz, ushort duration, int volume);
 
         void InitColor();
         

@@ -21,6 +21,7 @@ namespace Sps2Gr1.InTeam.State.Normal
 
         protected override void PerformSingleAction()
         {
+            Ev3.PlaySound(3000, 300, 2000);
             Ev3.StopAllMovements();
         }
 
