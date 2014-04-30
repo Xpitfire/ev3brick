@@ -26,7 +26,7 @@ namespace Sps2Gr1.InTeam.State.Error
 
         protected override void PerformSingleAction()
         {
-            Ev3.VehicleReverse(DeviceConstants.TurnDirection.Left, DeviceConstants.Speed.Slower, 90);
+            Ev3.VehicleReverse(DeviceConstants.TurnDirection.Left, DeviceConstants.Speed.Slower, 60);
         }
 
         public override int GetStateLevel()

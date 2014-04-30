@@ -78,6 +78,11 @@ namespace Sps2Gr1.InTeam.Control.Impl
 
         #region Ev3 Device simulated implementaiton
 
+        public void PlaySound()
+        {
+            throw new NotImplementedException();
+        }
+
         public void InitColor()
         {
             Logger.Log("InitColor action");

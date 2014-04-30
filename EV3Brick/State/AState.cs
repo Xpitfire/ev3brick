@@ -91,6 +91,9 @@ namespace Sps2Gr1.InTeam.State
         private void UpButton()
         {
             var cmd = new Command();
+            Logger.Log("Scanning Color sensor...");
+            // scan until a new action has been triggered
+            Ev3.InitColor();
             cmd.SetAction(() => StateEventQueue.EnqueueState(NormalSearchImpl.Name));
             cmd.SetCommandLevel(EventQueue.StateLevel.Level1);
             StateEventQueue.EnqueueCommand(cmd);
@@ -107,7 +110,14 @@ namespace Sps2Gr1.InTeam.State
         private void ReachedEdgeOrObjectDetected()
         {
             var cmd = new Command();
-            cmd.SetAction(() => StateEventQueue.EnqueueState(Ev3.HasLostObject() ? ErrorEdgeImpl.Name : NormalIdentifyImpl.Name));
+            if (Ev3.HasLostObject())
+            {
+                cmd.SetAction(() => StateEventQueue.EnqueueState(ErrorEdgeImpl.Name));
+            }
+            else
+            {
+                cmd.SetAction(() => StateEventQueue.EnqueueState(NormalIdentifyImpl.Name));
+            }
             cmd.SetCommandLevel(EventQueue.StateLevel.Level3);
             StateEventQueue.EnqueueCommand(cmd);
         }
@@ -118,6 +128,10 @@ namespace Sps2Gr1.InTeam.State
             cmd.SetAction(() => StateEventQueue.EnqueueState(NormalFoundImpl.Name));
             cmd.SetCommandLevel(EventQueue.StateLevel.Level3);
             StateEventQueue.EnqueueCommand(cmd);
+            var cmd2 = new Command();
+            cmd2.SetAction(() => Ev3.PlaySound());
+            cmd2.SetCommandLevel(EventQueue.StateLevel.Level1);
+            StateEventQueue.EnqueueCommand(cmd2);
         }
 
         #region State Update Methods

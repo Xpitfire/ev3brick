@@ -22,6 +22,8 @@ namespace Sps2Gr1.InTeam.Control
         bool HasLostObject();
 
 
+        void PlaySound();
+
         void InitColor();
         
         void StopAllMovements();

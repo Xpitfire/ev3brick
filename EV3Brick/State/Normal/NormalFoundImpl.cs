@@ -16,6 +16,7 @@ namespace Sps2Gr1.InTeam.State.Normal
         protected override void PerformSingleAction()
         {
             Logger.Log("Found the enemy!");
+            Ev3.StopAllMovements();
         }
 
         public override int GetStateLevel()

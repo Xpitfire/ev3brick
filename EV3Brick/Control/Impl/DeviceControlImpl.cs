@@ -5,6 +5,7 @@ using MonoBrickFirmware.Movement;
 using MonoBrickFirmware.Sensors;
 using MonoBrickFirmware.UserInput;
 using Sps2Gr1.InTeam.Logging;
+using MonoBrickFirmware.Sound;
 using Sps2Gr1.InTeam.Utility;
 
 namespace Sps2Gr1.InTeam.Control.Impl
@@ -13,6 +14,7 @@ namespace Sps2Gr1.InTeam.Control.Impl
     {
         # region Local Variables
 
+        private readonly object _sync = new object();
         private readonly ButtonEvents _buttonEvents;
         private readonly Vehicle _vehicle;
         private readonly IRSensor _irSensor;
@@ -22,14 +24,24 @@ namespace Sps2Gr1.InTeam.Control.Impl
         private readonly Motor _motorSensorSpinner;
         private readonly Ev3Timer _oscillationTimer = new Ev3Timer();
         private readonly Ev3Timer _reactivationTimer = new Ev3Timer();
+        private readonly Speaker _speaker = new Speaker(100);
         private bool _objDetectedChange = true;
-        private Color _enemyColor;
+        private static Color _enemyColor;
 
         # endregion
 
         #region Properties
 
-        public Color SavedColor { get; set; }
+        Color SavedColor
+        {
+            get { lock (_sync) return _enemyColor; }
+            set {
+                lock (_sync)
+                {
+                    _enemyColor = value;
+                }
+            }
+        }
 
         public bool UseSpinScanner { get; set; }
 
@@ -42,7 +54,7 @@ namespace Sps2Gr1.InTeam.Control.Impl
         public DeviceControlImpl()
         {
             // init motor spinner
-            _motorSensorSpinner = new Motor(MotorPort.OutC);
+            _motorSensorSpinner = new Motor(MotorPort.OutB);
             // init ev3 default settings
             _motorSensorSpinner.ResetTacho();
             UseSpinScanner = true;
@@ -57,10 +69,11 @@ namespace Sps2Gr1.InTeam.Control.Impl
             _vehicle = new Vehicle(MotorPort.OutA, MotorPort.OutD);
 
             // init sensors
-            _irSensor = new IRSensor(SensorPort.In4);
-            //_ultraSonicSensor = new UltraSonicSensor(SensorPort.In2, UltraSonicMode.Centimeter);
+            _irSensor = new IRSensor(SensorPort.In3);
 			_colorSensor = new EV3ColorSensor (SensorPort.In1, ColorMode.Color);  //new NXTColorSensor(SensorPort.In2); 
-			//_colorSensor.Mode = ColorMode.Ambient;
+            SavedColor = Color.White;
+
+            // init touch sensor
 			_touchSensor = new TouchSensor(SensorPort.In2);
 
             // init display
@@ -68,11 +81,11 @@ namespace Sps2Gr1.InTeam.Control.Impl
             _lcd.Clear();
 
             // start the general sensor monitoring thread
-            var thread = new Thread(SensorMonitorWorkThread);
-            thread.Start();
+            var threadMonitor = new Thread(SensorMonitorWorkThread);
+            threadMonitor.Start();
             // start motor spinner thread
-            thread = new Thread(ControlSpinScannerThread);
-            thread.Start();
+            var threadScanner = new Thread(ControlSpinScannerThread);
+            threadScanner.Start();
         }
 
         #region Ev3 Events
@@ -181,6 +194,11 @@ namespace Sps2Gr1.InTeam.Control.Impl
             return _objDetectedChange;
         }
 
+        public void PlaySound()
+        {
+            _speaker.Beep();
+        }
+
         /// <summary>
 		/// Stops all movements.
 		/// </summary>
@@ -213,8 +231,12 @@ namespace Sps2Gr1.InTeam.Control.Impl
         /// <returns>A color or none.</returns>
         public void InitColor()
         {
-            _enemyColor = _colorSensor.ReadColor();
-            Logger.Log("Scanned enemy color: " + _enemyColor);
+            SavedColor = _colorSensor.ReadColor();
+            if (SavedColor == Color.None)
+            {
+                SavedColor = Color.White;
+            }
+            Logger.Log("Scanned enemy color: " + SavedColor);
         }
 
         // ----- special event update thread for state behavior -----
@@ -243,18 +265,19 @@ namespace Sps2Gr1.InTeam.Control.Impl
                 }
 
                 // monitor infrared sensor activity
-                if (_objDetectedChange && _irSensor != null && _irSensor.ReadDistance() < 100)
+                if (_objDetectedChange && _irSensor != null && _irSensor.ReadDistance() < 50)
                 {
                     OnDetectedObjectEvent(null, null);
+                    Logger.Log("Infrared value: " + _irSensor.ReadDistance());
                     _objDetectedChange = false;
                 }
-                else if (!_objDetectedChange && _irSensor != null && _irSensor.ReadDistance() >= 100)
+                else if (!_objDetectedChange && _irSensor != null && _irSensor.ReadDistance() >= 50)
                 {
                     _objDetectedChange = true;
                 }
 
                 // monitor color sensor activity
-                if (_colorSensor != null && _enemyColor == _colorSensor.ReadColor())
+                if (_colorSensor != null && SavedColor == _colorSensor.ReadColor())
                 {
                     OnIdentifiedEnemyEvent(null, null);
                 }
@@ -281,7 +304,8 @@ namespace Sps2Gr1.InTeam.Control.Impl
             _reactivationTimer.TickTimeout = Ev3Timer.TickTime.Long;
             var initPos = true;
             // send the spin scanner to the first position
-            
+            SpinScannerToMaxMinusPos(null, null);
+            Logger.Log("Spin scanner head.");
             while (StateController.IsAlive)
             {
                 // control motor spin scanner
@@ -312,6 +336,7 @@ namespace Sps2Gr1.InTeam.Control.Impl
                         {
                             SpinScannerToMaxMinusPos(null, null);
                             _reactivationTimer.Reset();
+                            Logger.Log("Reactivated scanner.");
                         }
                     }
                 }

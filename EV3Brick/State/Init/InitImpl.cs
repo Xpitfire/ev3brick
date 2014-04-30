@@ -21,13 +21,11 @@ namespace Sps2Gr1.InTeam.State.Init
 
         protected override void PerformRecurrentAction()
         {
-            // do nothing
         }
 
         protected override sealed void PerformSingleAction()
         {
-            Logger.Log("Color sensor initialization...");
-            Ev3.InitColor();
+            Logger.Log("Wait for user input.");
         }
 
         public override int GetStateLevel()
