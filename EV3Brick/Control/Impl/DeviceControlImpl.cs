@@ -14,29 +14,29 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
     {
         # region Local Variables
 
-        private readonly object _sync = new object();
+        private static readonly object Sync = new object();
         private readonly ButtonEvents _buttonEvents;
         private readonly Vehicle _vehicle;
-        private readonly IRSensor _irSensor;
+        private readonly EV3IRSensor _irSensor;
         private readonly Lcd _lcd;
-        private readonly TouchSensor _touchSensor;
+        private readonly EV3TouchSensor _touchSensor;
 		private readonly  EV3ColorSensor _colorSensor; //NXTColorSensor _colorSensor;
         private readonly Motor _motorSensorSpinner;
         private readonly Ev3Timer _oscillationTimer = new Ev3Timer();
         private readonly Ev3Timer _reactivationTimer = new Ev3Timer();
         private readonly Speaker _speaker = new Speaker(100);
         private bool _objDetectedChange = true;
-        private static Color _enemyColor;
+        private static string _enemyColor;
 
         # endregion
 
         #region Properties
 
-        Color SavedColor
+        static string SavedColor
         {
-            get { lock (_sync) return _enemyColor; }
+            get { lock (Sync) return _enemyColor; }
             set {
-                lock (_sync)
+                lock (Sync)
                 {
                     _enemyColor = value;
                 }
@@ -69,12 +69,12 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
             _vehicle = new Vehicle(MotorPort.OutA, MotorPort.OutD);
 
             // init sensors
-            _irSensor = new IRSensor(SensorPort.In3);
+            _irSensor = new EV3IRSensor(SensorPort.In3);
 			_colorSensor = new EV3ColorSensor (SensorPort.In1, ColorMode.Color);  //new NXTColorSensor(SensorPort.In2); 
-            SavedColor = Color.White;
+            SavedColor = "NOTHING";
 
             // init touch sensor
-			_touchSensor = new TouchSensor(SensorPort.In2);
+			_touchSensor = new EV3TouchSensor(SensorPort.In2);
 
             // init display
             _lcd = new Lcd();
@@ -225,9 +225,9 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
             LcdConsole.WriteLine(s);
         }
 
-        private bool IsValidColor(Color c)
+        private bool IsValidColor(string c)
         {
-            return c == Color.Red ||  c == Color.Yellow || c == Color.Blue;
+            return c == "Red" ||  c == "Yellow" || c == "Blue";
         }
 
         /// <summary>
@@ -236,11 +236,21 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
         /// <returns>A color or none.</returns>
         public void InitColor()
         {
-            SavedColor = _colorSensor.ReadColor();
+            Thread.Sleep(300);
             while (!IsValidColor(SavedColor))
             {
-                SavedColor = _colorSensor.ReadColor();
+                try
+                {
+                    SavedColor = _colorSensor.ReadAsString();
+                    Thread.Sleep(1000);
+                }
+                catch
+                {
+                    // do nothing
+                    Logger.Log("Color-Exception 1");
+                }
             }
+
             Logger.Log("Scanned enemy color: " + SavedColor);
         }
 
@@ -280,13 +290,22 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
                 {
                     _objDetectedChange = true;
                 }
-
-                // monitor color sensor activity
-                if (_colorSensor != null && SavedColor == _colorSensor.ReadColor())
+                /*
+                try
                 {
-                    OnIdentifiedEnemyEvent(null, null);
+                    // monitor color sensor activity
+                    if (_colorSensor != null && SavedColor == _colorSensor.ReadAsString())
+                    {
+                        OnIdentifiedEnemyEvent(null, null);
+                    }
                 }
-                
+                catch
+                {
+                    // do nothing
+                    Logger.Log("Color-Exception 2");
+                }
+                */
+                  
                 Thread.Sleep(100);
             }
         }

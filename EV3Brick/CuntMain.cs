@@ -25,8 +25,33 @@ namespace SPSGrp1Grp2.Cunt
             }
             catch (Exception ex)
             {
-                Logger.Log("ERROR: Exception occured!" + ex.Message);
+                Logger.Log("Sys-ERROR");
+                /*
+                string s = ex.Message;
+                int subLen = 30;
+                int i = 0;
+                var eMes = new List<string>();
+                while (i < s.Length)
+                {
+                    if (subLen >= s.Length - i)
+                    {
+                        eMes.Add(s.Substring(i, subLen - 1));
+                    }
+                    else
+                    {
+                        eMes.Add(s.Substring(s.Length - i, s.Length - 1));
+                    }
+                    i = i + subLen;
+                }
+                foreach(string sm in eMes)
+                {
+                    Logger.Log(sm);
+                }
+                */
+                Logger.Log(ex.Message);
+                Logger.Log(ex.Message.Substring(ex.Message.Length-20, ex.Message.Length));
                 Thread.Sleep(5000);
+                StateController.Exit();
             }
         }
     }
