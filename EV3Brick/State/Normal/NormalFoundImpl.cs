@@ -1,7 +1,7 @@
-﻿using Sps2Gr1.InTeam.Logging;
-using Sps2Gr1.InTeam.State;
+﻿using SPSGrp1Grp2.Cunt.Logging;
+using SPSGrp1Grp2.Cunt.State;
 
-namespace Sps2Gr1.InTeam.State.Normal
+namespace SPSGrp1Grp2.Cunt.State.Normal
 {
     class NormalFoundImpl : AState
     {
@@ -16,6 +16,7 @@ namespace Sps2Gr1.InTeam.State.Normal
         protected override void PerformSingleAction()
         {
             Logger.Log("Found the enemy!");
+            Ev3.PlaySound(3000, 300, 2000);
             Ev3.StopAllMovements();
         }
 

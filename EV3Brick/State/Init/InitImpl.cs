@@ -1,9 +1,9 @@
 ﻿using System;
-using Sps2Gr1.InTeam.State.Normal;
-using Sps2Gr1.InTeam.Logging;
-using Sps2Gr1.InTeam.Utility;
+using SPSGrp1Grp2.Cunt.State.Normal;
+using SPSGrp1Grp2.Cunt.Logging;
+using SPSGrp1Grp2.Cunt.Utility;
 
-namespace Sps2Gr1.InTeam.State.Init
+namespace SPSGrp1Grp2.Cunt.State.Init
 {
     class InitImpl : AState
     {

@@ -4,11 +4,11 @@ using MonoBrickFirmware.Display;
 using MonoBrickFirmware.Movement;
 using MonoBrickFirmware.Sensors;
 using MonoBrickFirmware.UserInput;
-using Sps2Gr1.InTeam.Logging;
+using SPSGrp1Grp2.Cunt.Logging;
 using MonoBrickFirmware.Sound;
-using Sps2Gr1.InTeam.Utility;
+using SPSGrp1Grp2.Cunt.Utility;
 
-namespace Sps2Gr1.InTeam.Control.Impl
+namespace SPSGrp1Grp2.Cunt.Control.Impl
 {
     public class DeviceControlImpl : IDeviceControl
     {

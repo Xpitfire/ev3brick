@@ -3,8 +3,8 @@ using System.ComponentModel;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
-using Sps2Gr1.InTeam;
-using Sps2Gr1.InTeam.Control.Impl;
+using SPSGrp1Grp2.Cunt;
+using SPSGrp1Grp2.Cunt.Control.Impl;
 
 namespace SpsGr1.InTeam
 {

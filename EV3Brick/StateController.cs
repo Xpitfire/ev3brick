@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading;
-using Sps2Gr1.InTeam.State;
-using Sps2Gr1.InTeam.State.Init;
-using Sps2Gr1.InTeam.Logging;
-using Sps2Gr1.InTeam.Utility;
+using SPSGrp1Grp2.Cunt.State;
+using SPSGrp1Grp2.Cunt.State.Init;
+using SPSGrp1Grp2.Cunt.Logging;
+using SPSGrp1Grp2.Cunt.Utility;
 
-namespace Sps2Gr1.InTeam
+namespace SPSGrp1Grp2.Cunt
 {
     public class StateController
     {

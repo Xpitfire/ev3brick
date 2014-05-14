@@ -1,6 +1,6 @@
-﻿using Sps2Gr1.InTeam.Control;
+﻿using SPSGrp1Grp2.Cunt.Control;
 
-namespace Sps2Gr1.InTeam.Logging
+namespace SPSGrp1Grp2.Cunt.Logging
 {
     public class Logger
     {

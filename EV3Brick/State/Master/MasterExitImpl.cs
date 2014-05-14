@@ -1,7 +1,7 @@
 ﻿using System;
-using Sps2Gr1.InTeam.Logging;
+using SPSGrp1Grp2.Cunt.Logging;
 
-namespace Sps2Gr1.InTeam.State.Master
+namespace SPSGrp1Grp2.Cunt.State.Master
 {
     class MasterExitImpl : AState
     {

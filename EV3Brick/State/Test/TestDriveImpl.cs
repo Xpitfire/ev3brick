@@ -1,7 +1,7 @@
 ﻿using System.Threading;
-using Sps2Gr1.InTeam.State.Normal;
+using SPSGrp1Grp2.Cunt.State.Normal;
 
-namespace Sps2Gr1.InTeam.State.Test
+namespace SPSGrp1Grp2.Cunt.State.Test
 {
     class TestDriveImpl : AState
     {

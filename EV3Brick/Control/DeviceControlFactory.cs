@@ -1,6 +1,6 @@
-﻿using Sps2Gr1.InTeam.Control.Impl;
+﻿using SPSGrp1Grp2.Cunt.Control.Impl;
 
-namespace Sps2Gr1.InTeam.Control
+namespace SPSGrp1Grp2.Cunt.Control
 {
     public class DeviceControlFactory
     {

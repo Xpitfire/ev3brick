@@ -1,6 +1,6 @@
-﻿using Sps2Gr1.InTeam.Utility;
+﻿using SPSGrp1Grp2.Cunt.Utility;
 
-namespace Sps2Gr1.InTeam.State.Normal
+namespace SPSGrp1Grp2.Cunt.State.Normal
 {
     class NormalIdentifyImpl : AState
     {
@@ -21,7 +21,7 @@ namespace Sps2Gr1.InTeam.State.Normal
 
         protected override void PerformSingleAction()
         {
-            Ev3.PlaySound(3000, 300, 2000);
+            //Ev3.PlaySound(3000, 300, 2000);
             Ev3.StopAllMovements();
         }
 

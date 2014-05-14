@@ -1,16 +1,16 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
-using Sps2Gr1.InTeam.Debug;
-using Sps2Gr1.InTeam.Control;
-using Sps2Gr1.InTeam.State.Init;
-using Sps2Gr1.InTeam.State.Master;
-using Sps2Gr1.InTeam.State.Normal;
-using Sps2Gr1.InTeam.Logging;
-using Sps2Gr1.InTeam.State.Error;
-using Sps2Gr1.InTeam.Utility;
+using SPSGrp1Grp2.Cunt.Debug;
+using SPSGrp1Grp2.Cunt.Control;
+using SPSGrp1Grp2.Cunt.State.Init;
+using SPSGrp1Grp2.Cunt.State.Master;
+using SPSGrp1Grp2.Cunt.State.Normal;
+using SPSGrp1Grp2.Cunt.Logging;
+using SPSGrp1Grp2.Cunt.State.Error;
+using SPSGrp1Grp2.Cunt.Utility;
 
-namespace Sps2Gr1.InTeam.State
+namespace SPSGrp1Grp2.Cunt.State
 {
     abstract class AState : IDebug
     {

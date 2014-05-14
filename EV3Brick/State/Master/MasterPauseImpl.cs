@@ -1,4 +1,4 @@
-﻿namespace Sps2Gr1.InTeam.State.Master
+﻿namespace SPSGrp1Grp2.Cunt.State.Master
 {
     class MasterPauseImpl : AState
     {

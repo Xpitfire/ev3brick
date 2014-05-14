@@ -1,10 +1,10 @@
-﻿using Sps2Gr1.InTeam.State.Init;
-using Sps2Gr1.InTeam.State.Master;
-using Sps2Gr1.InTeam.State.Normal;
-using Sps2Gr1.InTeam.State.Error;
-using Sps2Gr1.InTeam.State.Test;
+﻿using SPSGrp1Grp2.Cunt.State.Init;
+using SPSGrp1Grp2.Cunt.State.Master;
+using SPSGrp1Grp2.Cunt.State.Normal;
+using SPSGrp1Grp2.Cunt.State.Error;
+using SPSGrp1Grp2.Cunt.State.Test;
 
-namespace Sps2Gr1.InTeam.State
+namespace SPSGrp1Grp2.Cunt.State
 {
     internal class StateTypeConstants
     {

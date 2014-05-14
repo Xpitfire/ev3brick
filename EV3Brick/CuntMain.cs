@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Sps2Gr1.InTeam.Logging;
+using SPSGrp1Grp2.Cunt.Logging;
 
-namespace Sps2Gr1.InTeam
+namespace SPSGrp1Grp2.Cunt
 {
     class CuntMain
     {

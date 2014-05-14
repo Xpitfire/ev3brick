@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace Sps2Gr1.InTeam.State.Normal
+namespace SPSGrp1Grp2.Cunt.State.Normal
 {
     class NormalSearchImpl : AState
     {

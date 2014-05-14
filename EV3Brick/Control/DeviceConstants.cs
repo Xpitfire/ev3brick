@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sps2Gr1.InTeam.Control
+namespace SPSGrp1Grp2.Cunt.Control
 {
     public class DeviceConstants
     {

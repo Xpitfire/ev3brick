@@ -1,8 +1,8 @@
 ﻿using System;
-using Sps2Gr1.InTeam.Control;
-using Sps2Gr1.InTeam.Utility;
+using SPSGrp1Grp2.Cunt.Control;
+using SPSGrp1Grp2.Cunt.Utility;
 
-namespace Sps2Gr1.InTeam.State.Normal
+namespace SPSGrp1Grp2.Cunt.State.Normal
 {
     class NormalFollowImpl : AState
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sps2Gr1.InTeam.Debug
+namespace SPSGrp1Grp2.Cunt.Debug
 {
     public interface IDebug
     {

@@ -7,8 +7,8 @@
     <ProjectGuid>{0D327AFC-1795-4AFD-9E34-267B5369B915}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sps2Gr1.InTeam</RootNamespace>
-    <AssemblyName>inTeam_Cunt</AssemblyName>
+    <RootNamespace>SPSGrp1Grp2.Cunt</RootNamespace>
+    <AssemblyName>Cunt</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
