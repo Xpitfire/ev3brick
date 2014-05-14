@@ -7,24 +7,26 @@ namespace SPSGrp1Grp2.Cunt.Control
     public interface IDeviceControl : IDebug
     {
         event Action EscapeReleasedButtonEvent;
-
         event Action EnterReleasedButtonEvent;
-
         event Action UpReleasedButtonEvent;
+        event Action DownReleasedButtonEvent;
+        event Action LeftReleasedButtonEvent;
+        event Action RightReleasedButtonEvent;
 
         event Action ReachedEdgeEvent;
-
         event Action IdentifiedEnemyEvent;
-
         event Action DetectedObjectEvent;
 
         
         bool HasLostObject();
 
 
-        void PlaySound(ushort Hz, ushort duration, int volume);
+        void PlaySound(ushort hz, ushort duration, int volume);
 
         void InitColor();
+
+        [Obsolete]
+        bool HasFoundColor();
         
         void StopAllMovements();
 

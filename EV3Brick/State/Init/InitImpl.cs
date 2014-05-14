@@ -10,7 +10,7 @@ namespace SPSGrp1Grp2.Cunt.State.Init
         public const string Name = "Init";
         private const int Level = EventQueue.StateLevel.Level1;
 
-        internal InitImpl(StateController controller)
+        public InitImpl(StateController controller)
         {
             // set the abstract state controller instance
             Controller = controller;
@@ -19,13 +19,27 @@ namespace SPSGrp1Grp2.Cunt.State.Init
             PerformSingleAction();
         }
 
+        internal InitImpl()
+        {
+        }
+
         protected override void PerformRecurrentAction()
         {
         }
 
         protected override sealed void PerformSingleAction()
         {
-            Logger.Log("Wait for user input.");
+            // reset all movements
+            Ev3.StopAllMovements();
+
+            Logger.Log("Escape == Exit");
+            Logger.Log("Enter  == Pause / Resume");
+            Logger.Log("Up     == Init color");
+            Logger.Log("Down   == Search Mode");
+            Logger.Log("Left   == Reset");
+            Logger.Log("Right  == Flee Mode");
+
+            Logger.Log("Wait for user input...");
         }
 
         public override int GetStateLevel()

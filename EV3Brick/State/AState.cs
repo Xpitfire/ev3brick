@@ -14,10 +14,7 @@ namespace SPSGrp1Grp2.Cunt.State
 {
     abstract class AState : IDebug
     {
-        /// <summary>
-        /// This timer is used to process time delayed operations.
-        /// </summary>
-        protected Ev3Timer StateTimer = new Ev3Timer();
+        #region Static members
 
         /// <summary>
         /// Controller instance, which holds the current operated state.
@@ -29,15 +26,12 @@ namespace SPSGrp1Grp2.Cunt.State
         /// </summary>
         private static EventQueue _eventQueue;
 
-
-        #region Inheritable Properties
-
-        protected IDeviceControl Ev3
+        protected static IDeviceControl Ev3
         {
             get { return DeviceControlFactory.Ev3Control; }
         }
 
-        protected EventQueue StateEventQueue
+        protected static EventQueue StateEventQueue
         {
             get { return _eventQueue ?? (_eventQueue = new EventQueue(_controller)); }
         }
@@ -45,7 +39,7 @@ namespace SPSGrp1Grp2.Cunt.State
         /// <summary>
         /// The program controller with the current used AState instance.
         /// </summary>
-        protected StateController Controller
+        protected static StateController Controller
         {
             set
             {
@@ -56,59 +50,91 @@ namespace SPSGrp1Grp2.Cunt.State
             get { return _controller; }
         }
         
-        #endregion
-
         /// <summary>
-        /// AState constructor to inistialize the base class instances.
+        /// Static AState constructor to inistialize the base class functionality.
         /// </summary>
-        protected AState()
+        static AState()
         {
             // add anonymous method action to event queue
             Ev3.EscapeReleasedButtonEvent += EscapeButton;
             Ev3.EnterReleasedButtonEvent += EnterButton;
             Ev3.UpReleasedButtonEvent += UpButton;
+            Ev3.DownReleasedButtonEvent += DownButton;
+            Ev3.LeftReleasedButtonEvent += LeftButton;
+            Ev3.RightReleasedButtonEvent += RightButton;
             Ev3.ReachedEdgeEvent += ReachedEdgeOrObjectDetected;
             Ev3.IdentifiedEnemyEvent += IdentifiedEnemy;
             Ev3.DetectedObjectEvent += DetectedObject;
         }
 
-        private void EscapeButton()
+        private static void EscapeButton()
         {
+            Logger.Log("CMD: Exit ...");
             var cmd = new Command();
             cmd.SetAction(() => StateEventQueue.EnqueueState(MasterExitImpl.Name));
             cmd.SetCommandLevel(EventQueue.StateLevel.Level1);
             StateEventQueue.EnqueueCommand(cmd);
         }
 
-        private void EnterButton()
+        private static void EnterButton()
         {
+            Logger.Log("CMD: Pause ...");
             var cmd = new Command();
             cmd.SetAction(() => StateEventQueue.EnqueueState(MasterPauseImpl.Name));
             cmd.SetCommandLevel(EventQueue.StateLevel.Level1);
             StateEventQueue.EnqueueCommand(cmd);
         }
 
-        private void UpButton()
+        private static void UpButton()
         {
-            var cmd = new Command();
-            Logger.Log("Scanning Color sensor...");
-            // scan until a new action has been triggered
+            Logger.Log("CMD: Scanning Color ...");
+            // ATTENTION: color scan blocks until a valid color has been found!
+            // Here it is not allowed to use the command queue and to enqueue
+            // this event, because it would block the state machine update
+            // cycle, due to its blocking implementation.
             Ev3.InitColor();
+        }
+
+        private static void DownButton()
+        {
+            Logger.Log("CMD: Goto NormalSearch ...");
+            var cmd = new Command();
             cmd.SetAction(() => StateEventQueue.EnqueueState(NormalSearchImpl.Name));
             cmd.SetCommandLevel(EventQueue.StateLevel.Level1);
             StateEventQueue.EnqueueCommand(cmd);
         }
 
-        private void DetectedObject()
+        private static void LeftButton()
         {
+            Logger.Log("CMD: Goto Init ...");
+            var cmd = new Command();
+            cmd.SetAction(() => StateEventQueue.EnqueueState(InitImpl.Name));
+            cmd.SetCommandLevel(EventQueue.StateLevel.Level1);
+            StateEventQueue.EnqueueCommand(cmd);
+        }
+
+        private static void RightButton()
+        {
+            Logger.Log("CMD: Goto NormalFlee ...");
+            var cmd = new Command();
+            cmd.SetAction(() => StateEventQueue.EnqueueState(NormalFleeImpl.Name));
+            cmd.SetCommandLevel(EventQueue.StateLevel.Level1);
+            StateEventQueue.EnqueueCommand(cmd);
+        }
+
+        private static void DetectedObject()
+        {
+            // do not use logging here, because it would flood the EV3 screen
+            // with logging events
             var cmd = new Command();
             cmd.SetAction(() => StateEventQueue.EnqueueState(NormalFollowImpl.Name));
             cmd.SetCommandLevel(EventQueue.StateLevel.Level3);
             StateEventQueue.EnqueueCommand(cmd);
         }
 
-        private void ReachedEdgeOrObjectDetected()
+        private static void ReachedEdgeOrObjectDetected()
         {
+            Logger.Log("CMD: Edge or Identify ...");
             var cmd = new Command();
             if (Ev3.HasLostObject())
             {
@@ -122,19 +148,23 @@ namespace SPSGrp1Grp2.Cunt.State
             StateEventQueue.EnqueueCommand(cmd);
         }
 
-        private void IdentifiedEnemy()
+        private static void IdentifiedEnemy()
         {
+            Logger.Log("CMD: Enemy found ...");
             var cmd = new Command();
             cmd.SetAction(() => StateEventQueue.EnqueueState(NormalFoundImpl.Name));
-            cmd.SetCommandLevel(EventQueue.StateLevel.Level3);
+            cmd.SetCommandLevel(EventQueue.StateLevel.Level2);
             StateEventQueue.EnqueueCommand(cmd);
-            var cmd2 = new Command();
-            //cmd2.SetAction(() => Ev3.PlaySound());
-            cmd2.SetCommandLevel(EventQueue.StateLevel.Level1);
-            StateEventQueue.EnqueueCommand(cmd2);
         }
 
+        #endregion
+
         #region State Update Methods
+
+        /// <summary>
+        /// This timer is used to process time delayed operations.
+        /// </summary>
+        protected Ev3Timer StateTimer = new Ev3Timer();
 
         /// <summary>
         /// Mothod which has to be implemented by all inheriting state sub-classes, to perform
@@ -217,10 +247,17 @@ namespace SPSGrp1Grp2.Cunt.State
             // convert state name to a state object
             var aState = StateTypeConstants.ConvertState(stateName);
 
-            // set the new state to the controller
-            SetState(aState);
-            // invoke the single action after state change
-            aState.PerformSingleAction();
+            if (aState != null)
+            {
+                // set the new state to the controller
+                SetState(aState);
+                // invoke the single action after state change
+                aState.PerformSingleAction();
+            }
+            else
+            {
+                Logger.Log("STATE FAULT! aState == null");
+            }
         }
 
         #endregion

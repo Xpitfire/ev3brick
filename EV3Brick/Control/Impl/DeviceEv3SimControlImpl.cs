@@ -20,6 +20,10 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
         public event Action EscapeReleasedButtonEvent;
         public event Action EnterReleasedButtonEvent;
         public event Action UpReleasedButtonEvent;
+        public event Action DownReleasedButtonEvent;
+        public event Action LeftReleasedButtonEvent;
+        public event Action RightReleasedButtonEvent;
+
         public event Action ReachedEdgeEvent;
         public event Action IdentifiedEnemyEvent;
         public event Action DetectedObjectEvent;
@@ -39,6 +43,24 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
         public void OnUpReleasedButtonEvent(object sender, EventArgs e)
         {
             var handler = UpReleasedButtonEvent;
+            if (handler != null) handler();
+        }
+
+        public void OnDownReleasedButtonEvent(object sender, EventArgs e)
+        {
+            var handler = DownReleasedButtonEvent;
+            if (handler != null) handler();
+        }
+
+        public void OnLeftReleasedButtonEvent(object sender, EventArgs e)
+        {
+            var handler = LeftReleasedButtonEvent;
+            if (handler != null) handler();
+        }
+
+        public void OnRightReleasedButtonEvent(object sender, EventArgs e)
+        {
+            var handler = RightReleasedButtonEvent;
             if (handler != null) handler();
         }
 
@@ -78,14 +100,19 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
 
         #region Ev3 Device simulated implementaiton
 
-        public void PlaySound(ushort Hz, ushort duration, int volume)
+        public void PlaySound(ushort hz, ushort duration, int volume)
         {
-            throw new NotImplementedException();
+            Logger.Log("Tadadaaaaaaaa sound!");
         }
 
         public void InitColor()
         {
             Logger.Log("InitColor action");
+        }
+
+        public bool HasFoundColor()
+        {
+            throw new NotImplementedException();
         }
 
         public bool HasLostObject()

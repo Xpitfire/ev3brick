@@ -15,9 +15,9 @@
         <Button x:Name="ButtonEnter" Content="Enter" HorizontalAlignment="Left" Margin="141,130,0,0" VerticalAlignment="Top" Width="114" Height="34" Click="ButtonEnter_Click"/>
         <Button x:Name="ButtonReachedEdgeEvent" Content="ReachedEdge" HorizontalAlignment="Left" Margin="35,281,0,0" VerticalAlignment="Top" Width="114" Height="22" Click="ButtonReachedEdgeEvent_Click"/>
         <Button x:Name="ButtonUp" Content="Up" HorizontalAlignment="Left" Margin="175,91,0,0" VerticalAlignment="Top" Width="44" Height="34" Click="ButtonUp_Click"/>
-        <Button x:Name="ButtonDown" Content="Down" HorizontalAlignment="Left" Margin="175,169,0,0" VerticalAlignment="Top" Width="44" Height="34"/>
-        <Button x:Name="ButtonLeft" Content="Left" HorizontalAlignment="Left" Margin="92,130,0,0" VerticalAlignment="Top" Width="44" Height="34"/>
-        <Button x:Name="ButtonRight" Content="Right" HorizontalAlignment="Left" Margin="260,130,0,0" VerticalAlignment="Top" Width="44" Height="34"/>
+        <Button x:Name="ButtonDown" Content="Down" HorizontalAlignment="Left" Margin="175,169,0,0" VerticalAlignment="Top" Width="44" Height="34" Click="ButtonDown_Click"/>
+        <Button x:Name="ButtonLeft" Content="Left" HorizontalAlignment="Left" Margin="92,130,0,0" VerticalAlignment="Top" Width="44" Height="34" Click="ButtonLeft_Click"/>
+        <Button x:Name="ButtonRight" Content="Right" HorizontalAlignment="Left" Margin="260,130,0,0" VerticalAlignment="Top" Width="44" Height="34" Click="ButtonRight_Click"/>
         <Label x:Name="LableControls" Content="EV3 Controls" HorizontalAlignment="Left" Margin="35,10,0,0" VerticalAlignment="Top"/>
         <Label x:Name="LableProgramEvents" Content="EV3 Program Events" HorizontalAlignment="Left" Margin="35,250,0,0" VerticalAlignment="Top"/>
         <Button x:Name="ButtonObjectDetected" Content="ObjectDetected" HorizontalAlignment="Left" Margin="35,308,0,0" VerticalAlignment="Top" Width="114" Height="22" Click="ButtonObjectDetected_Click"/>

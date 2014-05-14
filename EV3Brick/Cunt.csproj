@@ -51,6 +51,7 @@
     <Compile Include="State\Command.cs" />
     <Compile Include="State\Error\ErrorEdgeImpl.cs" />
     <Compile Include="State\EventQueue.cs" />
+    <Compile Include="State\Normal\NormalFleeImpl.cs" />
     <Compile Include="State\Normal\NormalFoundImpl.cs" />
     <Compile Include="State\Normal\NormalAdjustImpl.cs" />
     <Compile Include="State\Normal\NormalSearchImpl.cs" />

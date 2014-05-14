@@ -84,6 +84,21 @@ namespace SpsGr1.InTeam
         {
             DeviceEv3SimControlImpl.GetInstance().OnUpReleasedButtonEvent(sender, e);
         }
+
+        private void ButtonRight_Click(object sender, RoutedEventArgs e)
+        {
+            DeviceEv3SimControlImpl.GetInstance().OnRightReleasedButtonEvent(sender, e);
+        }
+
+        private void ButtonLeft_Click(object sender, RoutedEventArgs e)
+        {
+            DeviceEv3SimControlImpl.GetInstance().OnLeftReleasedButtonEvent(sender, e);
+        }
+
+        private void ButtonDown_Click(object sender, RoutedEventArgs e)
+        {
+            DeviceEv3SimControlImpl.GetInstance().OnDownReleasedButtonEvent(sender, e);
+        }
           
     }
 

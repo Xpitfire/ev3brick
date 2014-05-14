@@ -12,31 +12,27 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
 {
     public class DeviceControlImpl : IDeviceControl
     {
-        # region Local Variables
+        # region Local Variables / Properties
 
-        private static readonly object Sync = new object();
+        private readonly object _sync = new object();
         private readonly ButtonEvents _buttonEvents;
         private readonly Vehicle _vehicle;
         private readonly EV3IRSensor _irSensor;
         private readonly Lcd _lcd;
         private readonly EV3TouchSensor _touchSensor;
-		private readonly  EV3ColorSensor _colorSensor; //NXTColorSensor _colorSensor;
+		private readonly  EV3ColorSensor _colorSensor;
         private readonly Motor _motorSensorSpinner;
         private readonly Ev3Timer _oscillationTimer = new Ev3Timer();
         private readonly Ev3Timer _reactivationTimer = new Ev3Timer();
         private readonly Speaker _speaker = new Speaker(100);
         private bool _objDetectedChange = true;
-        private static string _enemyColor;
+        private string _enemyColor;
 
-        # endregion
-
-        #region Properties
-
-        static string SavedColor
+        string SavedColor
         {
-            get { lock (Sync) return _enemyColor; }
+            get { lock (_sync) return _enemyColor; }
             set {
-                lock (Sync)
+                lock (_sync)
                 {
                     _enemyColor = value;
                 }
@@ -64,6 +60,9 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
             _buttonEvents.EscapeReleased += () => OnEscapeReleasedButtonEvent(null, null);
             _buttonEvents.EnterReleased += () => OnEnterReleasedButtonEvent(null, null);
             _buttonEvents.UpReleased += () => OnUpReleasedButtonEvent(null, null);
+            _buttonEvents.DownReleased += () => OnDownReleasedButtonEvent(null, null);
+            _buttonEvents.LeftReleased += () => OnLeftReleasedButtonEvent(null, null);
+            _buttonEvents.RightReleased += () => OnRightReleasedButtonEvent(null, null);
 
             // init motor drive
             _vehicle = new Vehicle(MotorPort.OutA, MotorPort.OutD);
@@ -71,7 +70,7 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
             // init sensors
             _irSensor = new EV3IRSensor(SensorPort.In3);
 			_colorSensor = new EV3ColorSensor (SensorPort.In1, ColorMode.Color);  //new NXTColorSensor(SensorPort.In2); 
-            SavedColor = "NOTHING";
+            SavedColor = "UNINITIALIZED";
 
             // init touch sensor
 			_touchSensor = new EV3TouchSensor(SensorPort.In2);
@@ -86,6 +85,9 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
             // start motor spinner thread
             var threadScanner = new Thread(ControlSpinScannerThread);
             threadScanner.Start();
+            // start color monitor thread
+            var threadColor = new Thread(ColorMonitorThread);
+            threadColor.Start();
         }
 
         #region Ev3 Events
@@ -95,6 +97,10 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
         public event Action EscapeReleasedButtonEvent;
         public event Action EnterReleasedButtonEvent;
         public event Action UpReleasedButtonEvent;
+        public event Action DownReleasedButtonEvent;
+        public event Action LeftReleasedButtonEvent;
+        public event Action RightReleasedButtonEvent;
+
         public event Action ReachedEdgeEvent;
         public event Action IdentifiedEnemyEvent;
         public event Action DetectedObjectEvent;
@@ -122,6 +128,24 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
         public void OnUpReleasedButtonEvent(object sender, EventArgs e)
         {
             var handler = UpReleasedButtonEvent;
+            if (handler != null) handler();
+        }
+
+        public void OnDownReleasedButtonEvent(object sender, EventArgs e)
+        {
+            var handler = DownReleasedButtonEvent;
+            if (handler != null) handler();
+        }
+
+        public void OnLeftReleasedButtonEvent(object sender, EventArgs e)
+        {
+            var handler = LeftReleasedButtonEvent;
+            if (handler != null) handler();
+        }
+
+        public void OnRightReleasedButtonEvent(object sender, EventArgs e)
+        {
+            var handler = RightReleasedButtonEvent;
             if (handler != null) handler();
         }
 
@@ -194,9 +218,14 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
             return _objDetectedChange;
         }
 
-        public void PlaySound(ushort Hz, ushort duration, int volume)
+        public void PlaySound(ushort hz, ushort duration, int volume)
         {
-            _speaker.PlayTone(Hz, duration, volume);
+            _speaker.PlayTone(hz, duration, volume);
+        }
+
+        public bool HasFoundColor()
+        {
+            return SavedColor == _colorSensor.ReadAsString();
         }
 
         /// <summary>
@@ -225,36 +254,9 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
             LcdConsole.WriteLine(s);
         }
 
-        private bool IsValidColor(string c)
-        {
-            return c == "Red" ||  c == "Yellow" || c == "Blue";
-        }
-
-        /// <summary>
-        /// Read the color value of the color sensor.
-        /// </summary>
-        /// <returns>A color or none.</returns>
-        public void InitColor()
-        {
-            Thread.Sleep(300);
-            while (!IsValidColor(SavedColor))
-            {
-                try
-                {
-                    SavedColor = _colorSensor.ReadAsString();
-                    Thread.Sleep(1000);
-                }
-                catch
-                {
-                    // do nothing
-                    Logger.Log("Color-Exception 1");
-                }
-            }
-
-            Logger.Log("Scanned enemy color: " + SavedColor);
-        }
-
         // ----- special event update thread for state behavior -----
+
+        #region Monitor Working Thread
 
         /// <summary>
         /// Update thread to wrap the polling of sensor behaviors to a event base 
@@ -265,6 +267,7 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
         /// </summary>
         public void SensorMonitorWorkThread()
         {
+            Logger.Log("Started monitor worker thread");
             var touchSensorChange = true;
             while (StateController.IsAlive)
             {
@@ -290,25 +293,13 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
                 {
                     _objDetectedChange = true;
                 }
-                /*
-                try
-                {
-                    // monitor color sensor activity
-                    if (_colorSensor != null && SavedColor == _colorSensor.ReadAsString())
-                    {
-                        OnIdentifiedEnemyEvent(null, null);
-                    }
-                }
-                catch
-                {
-                    // do nothing
-                    Logger.Log("Color-Exception 2");
-                }
-                */
-                  
                 Thread.Sleep(100);
             }
         }
+
+        #endregion
+
+        #region Spin Scanner Thread
 
         public void SpinScannerMaxPlusPos(object o, EventArgs e)
         {
@@ -324,12 +315,12 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
 
         public void ControlSpinScannerThread()
         {
+            Logger.Log("Started spin scanner thread");
             _oscillationTimer.TickTimeout = Ev3Timer.TickTime.Short;
             _reactivationTimer.TickTimeout = Ev3Timer.TickTime.Long;
             var initPos = true;
             // send the spin scanner to the first position
             SpinScannerToMaxMinusPos(null, null);
-            Logger.Log("Spin scanner head.");
             while (StateController.IsAlive)
             {
                 // control motor spin scanner
@@ -373,6 +364,49 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
                 Thread.Sleep(100);
             }
         }
+
+        #endregion
+
+        #region Color Sensor Thread
+
+        private bool IsValidColor(string c)
+        {
+            return c == "Red" || c == "Yellow" || c == "Blue";
+        }
+
+        /// <summary>
+        /// Read the color value of the color sensor.
+        /// </summary>
+        /// <returns>A color or none.</returns>
+        public void InitColor()
+        {
+            Logger.Log("Init color");
+            Thread.Sleep(300);
+            Logger.Log("Wait for valid color:");
+            Logger.Log("valid == Red | Yellow | Blue");
+            while (!IsValidColor(SavedColor))
+            {
+                SavedColor = _colorSensor.ReadAsString();
+                Thread.Sleep(500);
+            }
+            Logger.Log("Scanned enemy color: " + SavedColor);
+        }
+
+        private void ColorMonitorThread()
+        {
+            Logger.Log("Started color sensor thread");
+            while (StateController.IsAlive)
+            {
+                // monitor color sensor activity
+                if (_colorSensor != null && SavedColor == _colorSensor.ReadAsString())
+                {
+                    OnIdentifiedEnemyEvent(null, null);
+                }
+                Thread.Sleep(500);
+            }
+        }
+
+        #endregion
 
         #endregion
 

@@ -42,6 +42,9 @@ namespace SPSGrp1Grp2.Cunt.State
             // convert the state name (string) to a new state object
             switch (stateName)
             {
+                case InitImpl.Name:
+                    aState = new InitImpl();
+                    break;
                 case ErrorEdgeImpl.Name:
                     aState = new ErrorEdgeImpl();
                     break;
@@ -65,6 +68,9 @@ namespace SPSGrp1Grp2.Cunt.State
                     break;
                 case NormalSearchImpl.Name:
                     aState = new NormalSearchImpl();
+                    break;
+                case NormalFleeImpl.Name:
+                    aState = new NormalFleeImpl();
                     break;
             }
             return aState;
