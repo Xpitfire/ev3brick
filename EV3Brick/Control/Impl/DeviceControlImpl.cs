@@ -225,6 +225,11 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
             LcdConsole.WriteLine(s);
         }
 
+        private bool IsValidColor(Color c)
+        {
+            return c == Color.Red ||  c == Color.Yellow || c == Color.Blue;
+        }
+
         /// <summary>
         /// Read the color value of the color sensor.
         /// </summary>
@@ -232,9 +237,9 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
         public void InitColor()
         {
             SavedColor = _colorSensor.ReadColor();
-            if (SavedColor == Color.None)
+            while (!IsValidColor(SavedColor))
             {
-                SavedColor = Color.White;
+                SavedColor = _colorSensor.ReadColor();
             }
             Logger.Log("Scanned enemy color: " + SavedColor);
         }
