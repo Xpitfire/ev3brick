@@ -150,7 +150,8 @@ namespace SPSGrp1Grp2.Cunt.State
 
         private static void IdentifiedEnemy()
         {
-            Logger.Log("CMD: Enemy found ...");
+            // do not use logging here, because it would flood the EV3 screen
+            // with logging events
             var cmd = new Command();
             cmd.SetAction(() => StateEventQueue.EnqueueState(NormalFoundImpl.Name));
             cmd.SetCommandLevel(EventQueue.StateLevel.Level2);

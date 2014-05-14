@@ -286,7 +286,6 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
                 if (_objDetectedChange && _irSensor != null && _irSensor.ReadDistance() < 50)
                 {
                     OnDetectedObjectEvent(null, null);
-                    Logger.Log("Infrared value: " + _irSensor.ReadDistance());
                     _objDetectedChange = false;
                 }
                 else if (!_objDetectedChange && _irSensor != null && _irSensor.ReadDistance() >= 50)
