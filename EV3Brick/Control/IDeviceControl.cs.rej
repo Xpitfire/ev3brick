@@ -1,0 +1,10 @@
+diff a/EV3Brick/Control/IDeviceControl.cs b/EV3Brick/Control/IDeviceControl.cs	(rejected hunks)
+@@ -22,7 +22,7 @@
+         bool HasLostObject();
+ 
+ 
+-        void PlaySound();
++        void PlaySound(ushort kHz, ushort duration, int volume);
+ 
+         void InitColor();
+         

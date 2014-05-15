@@ -1,0 +1,25 @@
+diff a/EV3Brick/Control/Impl/DeviceControlImpl.cs b/EV3Brick/Control/Impl/DeviceControlImpl.cs	(rejected hunks)
+@@ -225,6 +225,11 @@
+             LcdConsole.WriteLine(s);
+         }
+ 
++        private bool IsValidColor(Color c)
++        {
++            return c == Color.Red ||  c == Color.Yellow || c == Color.Blue;
++        }
++
+         /// <summary>
+         /// Read the color value of the color sensor.
+         /// </summary>
+@@ -232,9 +237,9 @@
+         public void InitColor()
+         {
+             SavedColor = _colorSensor.ReadColor();
+-            if (SavedColor == Color.None)
++            while (!IsValidColor(SavedColor))
+             {
+-                SavedColor = Color.White;
++                SavedColor = _colorSensor.ReadColor();
+             }
+             Logger.Log("Scanned enemy color: " + SavedColor);
+         }
