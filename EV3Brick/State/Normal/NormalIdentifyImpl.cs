@@ -8,7 +8,7 @@ namespace SPSGrp1Grp2.Cunt.State.Normal
         private const int Level = EventQueue.StateLevel.Level2;
 
         internal NormalIdentifyImpl() {
-            StateTimer.TickTimeout = Ev3Timer.TickTime.Long;
+            StateTimer.TickTimeout = Ev3Timer.TickTime.Short;
         }
 
         protected override void PerformRecurrentAction()

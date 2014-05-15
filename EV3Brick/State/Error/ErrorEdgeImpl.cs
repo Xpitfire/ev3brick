@@ -26,7 +26,10 @@ namespace SPSGrp1Grp2.Cunt.State.Error
 
         protected override void PerformSingleAction()
         {
-            Ev3.VehicleReverse(DeviceConstants.TurnDirection.Left, DeviceConstants.Speed.Slower, 60);
+            var r = new Random();
+            var i = r.Next(0, 2);
+            DeviceConstants.TurnDirection td = i <= 0 ? DeviceConstants.TurnDirection.Left : DeviceConstants.TurnDirection.Right;
+            Ev3.VehicleReverse(td, DeviceConstants.Speed.Slower, 60);
         }
 
         public override int GetStateLevel()

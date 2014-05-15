@@ -9,7 +9,7 @@ namespace SPSGrp1Grp2.Cunt.State.Normal
 
         internal NormalSearchImpl()
         {
-            StateTimer.TickTimeout = Utility.Ev3Timer.TickTime.Long;
+            StateTimer.TickTimeout = Utility.Ev3Timer.TickTime.Short;
         }
 
         protected override void PerformRecurrentAction()

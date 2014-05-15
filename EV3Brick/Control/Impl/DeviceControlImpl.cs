@@ -28,8 +28,9 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
         private readonly Speaker _speaker = new Speaker(100);
         private bool _objDetectedChange = true;
         private string _enemyColor;
+        private int _objectDegree;
 
-        string SavedColor
+        private string SavedColor
         {
             get { lock (_sync) return _enemyColor; }
             set {
@@ -158,6 +159,15 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
 
         public void OnDetectedObjectEvent(object sender, EventArgs e)
         {
+            if (_objectDegree > 5)
+            {
+                AdjustVehicleDirection(DeviceConstants.TurnDirection.Right);
+            } 
+            else if (_objectDegree < -5)
+            {
+                AdjustVehicleDirection(DeviceConstants.TurnDirection.Left);
+            }
+
             var handler = DetectedObjectEvent;
             if (handler != null) handler();
         }
@@ -165,11 +175,33 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
         # endregion
 
         #region Ev3 Firmware / Device implementation
+    
+        private void AdjustVehicleDirection(DeviceConstants.TurnDirection turnDirection)
+        {
+            if (turnDirection == DeviceConstants.TurnDirection.Left)
+            {
+                _vehicle.Forward(DeviceConstants.Speed.Fastest, 40, false, false);
+            }
+            // TODO find a way how to adjust the left / right direction drive
+        }
 
+        /// <summary>
+        /// Lets the vehicle turn on the spot to detect an enenmy.
+        /// </summary>
         public void SpinVehicle()
         {
-            Logger.Log("SpinLeft: speed" + DeviceConstants.Speed.Slower);
-            _vehicle.SpinLeft(DeviceConstants.Speed.Slower);
+            var r = new Random();
+            var i = r.Next(0, 2);
+            if (i <= 0)
+            {
+                Logger.Log("SpinLeft: speed" + DeviceConstants.Speed.Slower);
+                _vehicle.SpinLeft(DeviceConstants.Speed.Slow, 360, false, false);
+            }
+            else
+            {
+                Logger.Log("SpinLeft: speed" + DeviceConstants.Speed.Slower);
+                _vehicle.SpinRight(DeviceConstants.Speed.Slow, 360, false, false);
+            }
         }
 
         /// <summary>
@@ -289,12 +321,16 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
                 }
 
                 // monitor infrared sensor activity
-                if (_objDetectedChange && _irSensor != null && _irSensor.ReadDistance() < 50)
+                if (_objDetectedChange && _irSensor != null && _irSensor.ReadDistance() < 45)
                 {
+                    if (_motorSensorSpinner != null)
+                    {
+                        _objectDegree = _motorSensorSpinner.GetTachoCount();
+                    }
                     OnDetectedObjectEvent(null, null);
                     _objDetectedChange = false;
                 }
-                else if (!_objDetectedChange && _irSensor != null && _irSensor.ReadDistance() >= 50)
+                else if (!_objDetectedChange && _irSensor != null && _irSensor.ReadDistance() >= 35)
                 {
                     _objDetectedChange = true;
                 }
@@ -309,19 +345,19 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
         public void SpinScannerMaxPlusPos(object o, EventArgs e)
         {
             _oscillationTimer.Reset();
-            _motorSensorSpinner.MoveTo((byte)DeviceConstants.Speed.Slower, 35, true, false);
+            _motorSensorSpinner.MoveTo((byte)DeviceConstants.Speed.Slowest, 45, true, false);
         }
 
         public void SpinScannerToMaxMinusPos(object o, EventArgs e)
         {
             _oscillationTimer.Reset();
-            _motorSensorSpinner.MoveTo((byte)DeviceConstants.Speed.Slower, -35, true, false);
+            _motorSensorSpinner.MoveTo((byte)DeviceConstants.Speed.Slowest, -45, true, false);
         }
 
         public void ControlSpinScannerThread()
         {
             Logger.Log("Started spin scanner thread");
-            _oscillationTimer.TickTimeout = Ev3Timer.TickTime.Short;
+            _oscillationTimer.TickTimeout = Ev3Timer.TickTime.Medium;
             _reactivationTimer.TickTimeout = Ev3Timer.TickTime.Long;
             var initPos = true;
             // send the spin scanner to the first position
@@ -339,13 +375,13 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
                     }
                     else
                     {
-                        if (_oscillationTimer.IsTimeout() && _motorSensorSpinner.GetTachoCount() > 30)
+                        if (_oscillationTimer.IsTimeout() && _motorSensorSpinner.GetTachoCount() > 40)
                         {
                             SpinScannerToMaxMinusPos(null, null);
                             _reactivationTimer.Reset();
                         }
 
-                        if (_oscillationTimer.IsTimeout() && _motorSensorSpinner.GetTachoCount() < -30)
+                        if (_oscillationTimer.IsTimeout() && _motorSensorSpinner.GetTachoCount() < -40)
                         {
                             SpinScannerMaxPlusPos(null, null);
                             _reactivationTimer.Reset();

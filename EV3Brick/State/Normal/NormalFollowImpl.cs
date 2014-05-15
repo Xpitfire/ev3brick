@@ -11,7 +11,7 @@ namespace SPSGrp1Grp2.Cunt.State.Normal
 
         internal NormalFollowImpl()
         {
-            StateTimer.TickTimeout = Ev3Timer.TickTime.Medium;
+            StateTimer.TickTimeout = Ev3Timer.TickTime.Short;
         }
 
         protected override void PerformRecurrentAction()
@@ -20,6 +20,7 @@ namespace SPSGrp1Grp2.Cunt.State.Normal
             {
                 StateEventQueue.EnqueueState(NormalSearchImpl.Name);
             }
+
         }
 
         protected override void PerformSingleAction()
