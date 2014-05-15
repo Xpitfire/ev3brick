@@ -38,6 +38,8 @@ namespace SPSGrp1Grp2.Cunt.Control
 
         void VehicleStop();
 
+        void VehicleAdjust();
+
         void VehicleReverse(DeviceConstants.TurnDirection turn, sbyte speed, sbyte turnPercent);
 
 

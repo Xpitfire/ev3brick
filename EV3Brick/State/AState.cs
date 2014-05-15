@@ -130,6 +130,10 @@ namespace SPSGrp1Grp2.Cunt.State
             cmd.SetAction(() => StateEventQueue.EnqueueState(NormalFollowImpl.Name));
             cmd.SetCommandLevel(EventQueue.StateLevel.Level3);
             StateEventQueue.EnqueueCommand(cmd);
+            cmd = new Command();
+            cmd.SetAction(() => Ev3.VehicleAdjust());
+            cmd.SetCommandLevel(EventQueue.StateLevel.Level3);
+            StateEventQueue.EnqueueCommand(cmd);
         }
 
         private static void ReachedEdgeOrObjectDetected()

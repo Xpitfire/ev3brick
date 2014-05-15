@@ -146,6 +146,11 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
             Logger.Log("VehicleStop action");
         }
 
+        public void VehicleAdjust()
+        {
+            Logger.Log("Adjusting...");
+        }
+
         public void VehicleReverse(DeviceConstants.TurnDirection turn, sbyte speed, sbyte turnPercent)
         {
             Logger.Log("VehicleReverse action: turn = " + turn + ", speed = " + speed + ", turnPercent = " + turnPercent);

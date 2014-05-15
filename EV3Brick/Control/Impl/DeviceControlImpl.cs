@@ -159,15 +159,6 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
 
         public void OnDetectedObjectEvent(object sender, EventArgs e)
         {
-            if (_objectDegree > 5)
-            {
-                AdjustVehicleDirection(DeviceConstants.TurnDirection.Right);
-            } 
-            else if (_objectDegree < -5)
-            {
-                AdjustVehicleDirection(DeviceConstants.TurnDirection.Left);
-            }
-
             var handler = DetectedObjectEvent;
             if (handler != null) handler();
         }
@@ -224,6 +215,18 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
             }
         }
 
+        public void VehicleAdjust()
+        {
+            if (_objectDegree > 5)
+            {
+                AdjustVehicleDirection(DeviceConstants.TurnDirection.Right);
+            }
+            else if (_objectDegree < -5)
+            {
+                AdjustVehicleDirection(DeviceConstants.TurnDirection.Left);
+            }
+        }
+
         public void VehicleReverse(DeviceConstants.TurnDirection turn, sbyte speed, sbyte turnPercent)
         {
             Logger.Log("Turn: speed = " + speed + ", dir = " + turn + ", % = " + turnPercent);
@@ -254,11 +257,6 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
         public void PlaySound(ushort hz, ushort duration, int volume)
         {
             _speaker.PlayTone(hz, duration, volume);
-        }
-
-        public void ResetColor()
-        {
-            SavedColor = UninitColor;
         }
 
         public bool HasFoundColor()
@@ -415,12 +413,18 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
             return c == "Red" || c == "Yellow" || c == "Blue";
         }
 
+        public void ResetColor()
+        {
+            SavedColor = UninitColor;
+        }
+
         /// <summary>
         /// Read the color value of the color sensor.
         /// </summary>
         /// <returns>A color or none.</returns>
         public void InitColor()
         {
+            var timer = new Ev3Timer {TickTimeout = Ev3Timer.TickTime.Longest};
             Logger.Log("Init color");
             Thread.Sleep(300);
             Logger.Log("Wait for valid color:");
@@ -429,8 +433,19 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
             {
                 SavedColor = _colorSensor.ReadAsString();
                 Thread.Sleep(500);
+                if (timer.IsTimeout())
+                {
+                    break;
+                }
             }
-            Logger.Log("Scanned enemy color: " + SavedColor);
+            if (IsValidColor(SavedColor))
+            {
+                Logger.Log("Scanned enemy color: " + SavedColor);
+            }
+            else
+            {
+                Logger.Log("Timout reached! No color scanned.");
+            }
         }
 
         private void ColorMonitorThread()
