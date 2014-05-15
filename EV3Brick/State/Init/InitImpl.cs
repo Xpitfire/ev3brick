@@ -31,6 +31,7 @@ namespace SPSGrp1Grp2.Cunt.State.Init
         {
             // reset all movements
             Ev3.StopAllMovements();
+            Ev3.ResetColor();
 
             Logger.Log("Escape == Exit");
             Logger.Log("Enter  == Pause / Resume");

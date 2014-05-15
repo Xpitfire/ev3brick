@@ -110,6 +110,11 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
             Logger.Log("InitColor action");
         }
 
+        public void ResetColor()
+        {
+            Logger.Log("Reset color!");
+        }
+
         public bool HasFoundColor()
         {
             throw new NotImplementedException();

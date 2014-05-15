@@ -14,6 +14,7 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
     {
         # region Local Variables / Properties
 
+        public static readonly string UninitColor = "UNINITIALIZED";
         private readonly object _sync = new object();
         private readonly ButtonEvents _buttonEvents;
         private readonly Vehicle _vehicle;
@@ -70,7 +71,7 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
             // init sensors
             _irSensor = new EV3IRSensor(SensorPort.In3);
 			_colorSensor = new EV3ColorSensor (SensorPort.In1, ColorMode.Color);  //new NXTColorSensor(SensorPort.In2); 
-            SavedColor = "UNINITIALIZED";
+            SavedColor = UninitColor;
 
             // init touch sensor
 			_touchSensor = new EV3TouchSensor(SensorPort.In2);
@@ -221,6 +222,11 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
         public void PlaySound(ushort hz, ushort duration, int volume)
         {
             _speaker.PlayTone(hz, duration, volume);
+        }
+
+        public void ResetColor()
+        {
+            SavedColor = UninitColor;
         }
 
         public bool HasFoundColor()

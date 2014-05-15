@@ -25,6 +25,8 @@ namespace SPSGrp1Grp2.Cunt.Control
 
         void InitColor();
 
+        void ResetColor();
+
         [Obsolete]
         bool HasFoundColor();
         
