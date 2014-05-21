@@ -1,5 +1,7 @@
 ﻿using SPSGrp1Grp2.Cunt.Logging;
 using SPSGrp1Grp2.Cunt.State;
+using System.Threading;
+using SPSGrp1Grp2.Cunt.Utility;
 
 namespace SPSGrp1Grp2.Cunt.State.Normal
 {
@@ -8,16 +10,23 @@ namespace SPSGrp1Grp2.Cunt.State.Normal
         public const string Name = "NormalFound";
         private const int Level = EventQueue.StateLevel.Level2;
 
+        internal NormalFoundImpl() 
+        {
+            StateTimer.TickTimeout = Ev3Timer.TickTime.Medium;
+        }
+
         protected override void PerformRecurrentAction()
         {
-            // do nothing
+            if (StateTimer.IsTimeout())
+            {
+                StateEventQueue.EnqueueState(NormalSearchImpl.Name);
+            }
         }
 
         protected override void PerformSingleAction()
         {
             Logger.Log("Found the enemy!");
             Ev3.PlaySound(3000, 300, 2000);
-            Ev3.StopAllMovements();
         }
 
         public override int GetStateLevel()

@@ -9,7 +9,7 @@ namespace SPSGrp1Grp2.Cunt.State.Normal
         private const int Level = EventQueue.StateLevel.Level3;
 
         internal NormalAdjustImpl() {
-            StateTimer.TickTimeout = Ev3Timer.TickTime.Long;
+            StateTimer.TickTimeout = Ev3Timer.TickTime.Longer;
         }
 
         protected override void PerformRecurrentAction()
@@ -22,7 +22,7 @@ namespace SPSGrp1Grp2.Cunt.State.Normal
 
         protected override void PerformSingleAction()
         {
-            Ev3.VehicleDrive(DeviceConstants.Speed.Slowest);
+            Ev3.VehicleDrive(DeviceConstants.Speed.Slow);
         }
 
         public override int GetStateLevel()

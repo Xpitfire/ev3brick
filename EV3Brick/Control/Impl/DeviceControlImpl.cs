@@ -174,11 +174,14 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
         {
             if (turnDirection == DeviceConstants.TurnDirection.Left)
             {
-                _vehicle.Forward(DeviceConstants.Speed.Fastest, 40, false, false);
+                //_vehicle.Forward(DeviceConstants.Speed.Fastest, 40, false, false);
+                _vehicle.SpinLeft(DeviceConstants.Speed.Fastest, 180, false, true);
             }
-            // TODO find a way how to adjust the left / right direction drive
+            else
+            {
+                _vehicle.SpinRight(DeviceConstants.Speed.Fastest, 180, false, true);
+            }
         }
-
         /// <summary>
         /// Lets the vehicle turn on the spot to detect an enenmy.
         /// </summary>
@@ -189,12 +192,12 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
             if (i <= 0)
             {
                 Logger.Log("SpinLeft: speed" + DeviceConstants.Speed.Slower);
-                _vehicle.SpinLeft(DeviceConstants.Speed.Slow, 360, false, false);
+                _vehicle.SpinLeft(DeviceConstants.Speed.Slow, 120, false, false);
             }
             else
             {
                 Logger.Log("SpinLeft: speed" + DeviceConstants.Speed.Slower);
-                _vehicle.SpinRight(DeviceConstants.Speed.Slow, 360, false, false);
+                _vehicle.SpinRight(DeviceConstants.Speed.Slow, 120, false, false);
             }
         }
 
@@ -220,13 +223,13 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
 
         public void VehicleAdjust()
         {
-            if (_objectDegree > 5)
-            {
-                AdjustVehicleDirection(DeviceConstants.TurnDirection.Right);
-            }
-            else if (_objectDegree < -5)
+            if (_objectDegree > 10)
             {
                 AdjustVehicleDirection(DeviceConstants.TurnDirection.Left);
+            }
+            else if (_objectDegree < -10)
+            {
+                AdjustVehicleDirection(DeviceConstants.TurnDirection.Right);
             }
         }
 
@@ -346,13 +349,14 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
         public void SpinScannerMaxPlusPos(object o, EventArgs e)
         {
             _oscillationTimer.Reset();
-            _motorSensorSpinner.MoveTo((byte)DeviceConstants.Speed.Slowest, 45, true, false);
+            _motorSensorSpinner.MoveTo((byte)DeviceConstants.Speed.Slowest, 40, true, false);
+            
         }
 
         public void SpinScannerToMaxMinusPos(object o, EventArgs e)
         {
             _oscillationTimer.Reset();
-            _motorSensorSpinner.MoveTo((byte)DeviceConstants.Speed.Slowest, -45, true, false);
+            _motorSensorSpinner.MoveTo((byte)DeviceConstants.Speed.Slowest, -40, true, false);
         }
 
         public void ControlSpinScannerThread()
@@ -376,13 +380,13 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
                     }
                     else
                     {
-                        if (_oscillationTimer.IsTimeout() && _motorSensorSpinner.GetTachoCount() > 40)
+                        if (_oscillationTimer.IsTimeout() && _motorSensorSpinner.GetTachoCount() > 35)
                         {
                             SpinScannerToMaxMinusPos(null, null);
                             _reactivationTimer.Reset();
                         }
 
-                        if (_oscillationTimer.IsTimeout() && _motorSensorSpinner.GetTachoCount() < -40)
+                        if (_oscillationTimer.IsTimeout() && _motorSensorSpinner.GetTachoCount() < -35)
                         {
                             SpinScannerMaxPlusPos(null, null);
                             _reactivationTimer.Reset();
@@ -413,7 +417,7 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
 
         private bool IsValidColor(string c)
         {
-            return c == "Red" || c == "Yellow" || c == "Blue";
+            return c == "Red" || c == "Yellow" || c == "Blue" || c == "White";
         }
 
         public void ResetColor()
@@ -431,11 +435,10 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
             Logger.Log("Init color");
             Thread.Sleep(300);
             Logger.Log("Wait for valid color:");
-            Logger.Log("valid == Red | Yellow | Blue");
+            Logger.Log("valid == Red | Yellow | Blue | White");
             while (!IsValidColor(SavedColor))
             {
                 SavedColor = _colorSensor.ReadAsString();
-                Logger.Log(SavedColor);
                 Thread.Sleep(500);
                 if (timer.IsTimeout())
                 {

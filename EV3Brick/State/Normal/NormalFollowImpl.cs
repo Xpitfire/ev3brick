@@ -1,13 +1,14 @@
 ﻿using System;
 using SPSGrp1Grp2.Cunt.Control;
 using SPSGrp1Grp2.Cunt.Utility;
+using System.Threading;
 
 namespace SPSGrp1Grp2.Cunt.State.Normal
 {
     class NormalFollowImpl : AState
     {
         public const string Name = "NormalFollow";
-        private const int Level = EventQueue.StateLevel.Level3;
+        private const int Level = EventQueue.StateLevel.Level2;
 
         internal NormalFollowImpl()
         {
@@ -25,6 +26,8 @@ namespace SPSGrp1Grp2.Cunt.State.Normal
 
         protected override void PerformSingleAction()
         {
+            //Ev3.VehicleAdjust();
+            //Thread.Sleep(500);
             Ev3.VehicleDrive(DeviceConstants.Speed.Medium);
         }
 

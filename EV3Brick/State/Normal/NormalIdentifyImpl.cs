@@ -7,7 +7,8 @@ namespace SPSGrp1Grp2.Cunt.State.Normal
         public const string Name = "NormalIdentify";
         private const int Level = EventQueue.StateLevel.Level2;
 
-        internal NormalIdentifyImpl() {
+        internal NormalIdentifyImpl() 
+        {
             StateTimer.TickTimeout = Ev3Timer.TickTime.Short;
         }
 
