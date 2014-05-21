@@ -7,6 +7,7 @@ using MonoBrickFirmware.UserInput;
 using SPSGrp1Grp2.Cunt.Logging;
 using MonoBrickFirmware.Sound;
 using SPSGrp1Grp2.Cunt.Utility;
+using System.Reflection;
 
 namespace SPSGrp1Grp2.Cunt.Control.Impl
 {
@@ -21,7 +22,7 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
         private readonly EV3IRSensor _irSensor;
         private readonly Lcd _lcd;
         private readonly EV3TouchSensor _touchSensor;
-		private readonly  EV3ColorSensor _colorSensor;
+        private readonly NXTColorSensor _colorSensor;
         private readonly Motor _motorSensorSpinner;
         private readonly Ev3Timer _oscillationTimer = new Ev3Timer();
         private readonly Ev3Timer _reactivationTimer = new Ev3Timer();
@@ -71,7 +72,9 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
 
             // init sensors
             _irSensor = new EV3IRSensor(SensorPort.In3);
-			_colorSensor = new EV3ColorSensor (SensorPort.In1, ColorMode.Color);  //new NXTColorSensor(SensorPort.In2); 
+            _colorSensor = new NXTColorSensor(SensorPort.In1);
+            _colorSensor.Mode = ColorMode.Color;
+
             SavedColor = UninitColor;
 
             // init touch sensor
@@ -432,6 +435,7 @@ namespace SPSGrp1Grp2.Cunt.Control.Impl
             while (!IsValidColor(SavedColor))
             {
                 SavedColor = _colorSensor.ReadAsString();
+                Logger.Log(SavedColor);
                 Thread.Sleep(500);
                 if (timer.IsTimeout())
                 {
